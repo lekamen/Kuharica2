@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -18,14 +20,26 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private DBRAdapter db;
+    private KategorijaAdapter kategorijaAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        recyclerView.setHasFixedSize(true);
+
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
 
         initializeDatabase();
 
@@ -40,49 +54,42 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
-        GridView gridView = (GridView) findViewById(R.id.grid);
-        ImageAdapter imageAdapter = new ImageAdapter(this);
-        imageAdapter.notifyDataSetChanged();
-        gridView.setAdapter(imageAdapter);
-        gridView.invalidateViews();
-
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(MainActivity.this, "ovdje se treba otvorit novi activity s kategorijama",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void initializeDatabase() {
-        DBAdapter db = new DBAdapter(this);
+         db = new DBRAdapter(this);
+         db.open();
+         if(db.getAllKategorije().size() == 0) {
 
-        db.open();
-        if(db.getAllKategorije() != null && db.getAllKategorije().getCount() > 0) {
-            db.close();
-            return;
+             Kategorija kategorija = new Kategorija("Slatko", String.valueOf(R.drawable.cake));
+             Recept r = new Recept();
+             r.setImeRecepta("palačinke");
+             r.setPhotoRecept(String.valueOf(R.drawable.pancakes));
+             r.setNotes(null);
+             r.setSastojci(Arrays.asList("300g brašna", "3 kašike šećera", "3 jaja"));
+             r.setUpute(Arrays.asList("umiješati brašno sa šećerom", "zagrijati tavu 3 minute", "peći palačinke"));
+
+             kategorija.setRecepti(Arrays.asList(r));
+             db.insertRecept(r);
+             db.insertKategorija(kategorija);
+             db.insertReceptUKategoriju(kategorija, r);
+
+             Kategorija kat = new Kategorija("slano", null);
+             Recept r1 = new Recept();
+             r1.setImeRecepta("kifla");
+             r1.setPhotoRecept(null);
+             r1.setNotes(null);
+             r1.setSastojci(Arrays.asList("300g brašna", "3 jaja"));
+             r1.setUpute(Arrays.asList("peći u pećnici 15min"));
+             kat.setRecepti(Arrays.asList(r1));
+             db.insertRecept(r1);
+             db.insertKategorija(kat);
+             db.insertReceptUKategoriju(kat, r1);
+
         }
 
-        long id = db.insertKategorija("Slatko", String.valueOf(R.drawable.cake));
-        long id2 = db.insertRecept("palačinke", String.valueOf(R.drawable.pancakes), null);
-        db.insertSastojak(id2, "300g brašna");
-        db.insertSastojak(id2, "3 kašike šećera");
-        db.insertSastojak(id2, "3 jaja");
-
-        db.insertUpute(id2, "umiješati brašno sa šećerom");
-        db.insertUpute(id2, "zagrijati tavu 3 minute");
-        db.insertUpute(id2, "peći palačinke");
-        db.insertReceptUKategoriju(id, id2);
-
-        id = db.insertKategorija("Slano", null);
-        id2 = db.insertRecept("kifla", null, null);
-        db.insertSastojak(id2, "300g brašna");
-        db.insertSastojak(id2, "3 jaja");
-
-        db.insertUpute(id2, "peći u pećnici 15min");
-        db.insertReceptUKategoriju(id, id2);
+        kategorijaAdapter = new KategorijaAdapter(db.getAllKategorije(), this, recyclerView);
+        recyclerView.setAdapter(kategorijaAdapter);
         db.close();
     }
 
