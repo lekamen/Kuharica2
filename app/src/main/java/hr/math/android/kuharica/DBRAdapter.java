@@ -150,6 +150,24 @@ public class DBRAdapter {
         return lista;
     }
 
+    public List<Kategorija> searchKategorijeByFilter(String filter) {
+        Cursor c = db.query(DATABASE_KATEGORIJA, new String[] {ID_KATEGORIJE, IME_KATEGORIJE, PHOTO_KATEGORIJA},
+                IME_KATEGORIJE + " LIKE '%" + filter + "%'", null, null, null, null);
+
+        List<Kategorija> lista = new ArrayList<>();
+        if(c.moveToFirst()) {
+            do {
+                Kategorija kategorija = new Kategorija();
+
+                kategorija.setId(c.getLong(c.getColumnIndex(ID_KATEGORIJE)));
+                kategorija.setImeKategorije(c.getString(c.getColumnIndex(IME_KATEGORIJE)));
+                kategorija.setPhotoKategorije(c.getString(c.getColumnIndex(PHOTO_KATEGORIJA)));
+                lista.add(kategorija);
+            } while (c.moveToNext());
+        }
+        return lista;
+    }
+
     public Kategorija getKategorija(long id) throws SQLException {
         Cursor c = db.query(true, DATABASE_KATEGORIJA, new String[]{ID_KATEGORIJE, IME_KATEGORIJE, PHOTO_KATEGORIJA},
                 ID_KATEGORIJE + "=" + id, null, null, null, null, null);
@@ -200,7 +218,7 @@ public class DBRAdapter {
             query = "SELECT * FROM " + DATABASE_RECEPT;
         } else {
             query = "SELECT * FROM " + DATABASE_RECEPT + " WHERE "
-                    + IME_RECEPTA + " LIKE " + filter;
+                    + IME_RECEPTA + " LIKE '%" + filter + "%'";
         }
 
         List<Recept> recepti = new ArrayList<>();
