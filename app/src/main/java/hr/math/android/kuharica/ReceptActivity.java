@@ -26,7 +26,7 @@ public class ReceptActivity extends AppCompatActivity {
         ListView lista = (ListView) findViewById(R.id.sastojci_list);
 
         ArrayList<Sastojak> temp = new ArrayList<>();
-        for (String s: sastojci) {
+        /*for (String s: sastojci) {
             Sastojak sas = new Sastojak();
             sas.setSastojak(s);
             sas.setSelected(false);
@@ -34,7 +34,7 @@ public class ReceptActivity extends AppCompatActivity {
         }
         SastojciAdapter adapter_sastojci = new SastojciAdapter(this, temp);
         lista.setAdapter(adapter_sastojci);
-
+        */
         setContentView(R.layout.activity_recept);
     }
 
