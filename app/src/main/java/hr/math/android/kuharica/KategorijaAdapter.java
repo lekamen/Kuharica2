@@ -1,6 +1,8 @@
 package hr.math.android.kuharica;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -64,7 +66,7 @@ public class KategorijaAdapter extends RecyclerView.Adapter<KategorijaAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         final Kategorija kategorija = kategorije.get(position);
         holder.imeKategorije.setText(kategorija.getImeKategorije());
         //ako je photoKategorije null onda se uzima defaultni
@@ -80,7 +82,15 @@ public class KategorijaAdapter extends RecyclerView.Adapter<KategorijaAdapter.Vi
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "ucitavanje kategorije", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "ucitavanje kategorije", Toast.LENGTH_SHORT).show();
+                Intent goToCategoryIntent = new Intent(context, CategoryActivity.class);
+
+                Bundle mBundle = new Bundle();
+                mBundle.putLong("categoryId", position);
+
+                goToCategoryIntent.putExtras(mBundle);
+                context.startActivity(goToCategoryIntent);
+
             }
         });
     }
