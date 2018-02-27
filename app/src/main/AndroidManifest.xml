@@ -20,7 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ReceptActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="true"></activity>
     </application>
 
 </manifest>
