@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         navigationView.setCheckedItem(R.id.home);
+
     }
 
     NavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
@@ -90,8 +91,8 @@ public class MainActivity extends AppCompatActivity {
              r.setUpute(Arrays.asList("umiješati brašno sa šećerom", "zagrijati tavu 3 minute", "peći palačinke"));
 
              kategorija.setRecepti(Arrays.asList(r));
-             db.insertRecept(r);
-             db.insertKategorija(kategorija);
+             r.setId(db.insertRecept(r));
+             kategorija.setId(db.insertKategorija(kategorija));
              db.insertReceptUKategoriju(kategorija, r);
 
              Kategorija kat = new Kategorija("slano", null);
@@ -102,10 +103,9 @@ public class MainActivity extends AppCompatActivity {
              r1.setSastojci(Arrays.asList("300g brašna", "3 jaja"));
              r1.setUpute(Arrays.asList("peći u pećnici 15min"));
              kat.setRecepti(Arrays.asList(r1));
-             db.insertRecept(r1);
-             db.insertKategorija(kat);
+             r1.setId(db.insertRecept(r1));
+             kat.setId(db.insertKategorija(kat));
              db.insertReceptUKategoriju(kat, r1);
-
         }
 
         kategorijaAdapter = new KategorijaAdapter(db.getAllKategorije(), this, recyclerView);

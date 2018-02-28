@@ -144,6 +144,7 @@ public class DBRAdapter {
                 kategorija.setId(c.getLong(c.getColumnIndex(ID_KATEGORIJE)));
                 kategorija.setImeKategorije(c.getString(c.getColumnIndex(IME_KATEGORIJE)));
                 kategorija.setPhotoKategorije(c.getString(c.getColumnIndex(PHOTO_KATEGORIJA)));
+                kategorija.setRecepti(getAllReceptiFromKategorija(kategorija.getId()));
                 lista.add(kategorija);
             } while (c.moveToNext());
         }
@@ -183,7 +184,7 @@ public class DBRAdapter {
         return kategorija;
     }
 
-    public void insertRecept(Recept recept) {
+    public long insertRecept(Recept recept) {
         ContentValues initialValues = new ContentValues();
 
         initialValues.put(IME_RECEPTA, recept.getImeRecepta());
@@ -200,6 +201,7 @@ public class DBRAdapter {
         for(String u : upute) {
             insertUpute(id, u);
         }
+        return id;
     }
 
     public void deleteRecept(long id) {
@@ -226,14 +228,6 @@ public class DBRAdapter {
 
         if(c.moveToFirst()) {
             do {
-                /*Recept r = new Recept();
-                r.setId(c.getLong(c.getColumnIndex(ID_RECEPTA)));
-                r.setImeRecepta(c.getString(c.getColumnIndex(IME_RECEPTA)));
-                r.setPhotoRecept(c.getString(c.getColumnIndex(PHOTO_RECEPT)));
-                r.setNotes(c.getString(c.getColumnIndex(NOTES)));
-                r.setSastojci(getAllSastojciZaRecept(r.getId()));
-                r.setUpute(getAllUputeZaRecept(r.getId()));*/
-
                 recepti.add(getReceptZaId(c.getLong(c.getColumnIndex(ID_RECEPTA))));
             } while(c.moveToNext());
         }
