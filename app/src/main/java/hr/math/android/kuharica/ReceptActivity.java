@@ -46,7 +46,7 @@ public class ReceptActivity extends AppCompatActivity {
         List<String> sastojci = current.getSastojci();
         List<String> upute = current.getUpute();
         ListView lista = (ListView) findViewById(R.id.sastojci_list);
-
+        /*
         ArrayList<Sastojak> temp = new ArrayList<>();
         for (String s: temp_list) {
             Sastojak sas = new Sastojak();
@@ -57,7 +57,7 @@ public class ReceptActivity extends AppCompatActivity {
         SastojciAdapter adapter_sastojci = new SastojciAdapter(this, temp);
         lista.setAdapter(adapter_sastojci);
         setListViewHeightBasedOnChildren(lista);
-
+        */
     }
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {

@@ -6,13 +6,14 @@
     <string name="alertDialogPositive">Azuriraj</string>
     <string name="alertDialogNeutral">Izbrisi</string>
     <string name="alertDialogNegative">Odustani</string>
-
+    <string name="omog_split_view">Omoguci split view</string>
+    <string name="threedots"><![CDATA[&#8942]]></string>
 
     <!---
         IMENA VARIJABLI U SHARED PREFRENCES
                     &
             OSTALO BITNO ZA TO
-    !-->
+    !-->napravi
     <string name="splitViewEnabled">splitViewEnabled</string>
     <string name="mPrefs">hr.math.android.kuharica.mPrefrences</string>
 </resources>
