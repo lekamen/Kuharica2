@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="hr.math.android.kuharica.MainActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -23,26 +22,28 @@
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
         android:id="@+id/recyclerView"/>
 
-    <include layout="@layout/content_main" />
 
-
-    <GridView
+    <FrameLayout
+        android:id="@+id/fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:columnWidth="90dp"
-        android:numColumns="auto_fit"
-        android:stretchMode="columnWidth"
-        android:id="@+id/grid" />
+        android:elevation="0dp"
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        />
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/fam_menus_fragment"
+        app:elevation="0dp"
+        />
 
-</LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>

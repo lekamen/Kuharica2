@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="hr.math.android.kuharica.SearchActivity">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Pretražite kuharicu..."
+        android:id="@+id/searchText" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pretraži"
+        android:onClick="pretraziKuharicu"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:id="@+id/searchCategory"/>
+
+            <com.github.clans.fab.Label
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PRETRAGA PO KATEGORIJAMA"
+                android:layout_gravity="left"
+                android:id="@+id/label"/>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -144,6 +144,25 @@ public class DBRAdapter {
                 kategorija.setId(c.getLong(c.getColumnIndex(ID_KATEGORIJE)));
                 kategorija.setImeKategorije(c.getString(c.getColumnIndex(IME_KATEGORIJE)));
                 kategorija.setPhotoKategorije(c.getString(c.getColumnIndex(PHOTO_KATEGORIJA)));
+                kategorija.setRecepti(getAllReceptiFromKategorija(kategorija.getId()));
+                lista.add(kategorija);
+            } while (c.moveToNext());
+        }
+        return lista;
+    }
+
+    public List<Kategorija> searchKategorijeByFilter(String filter) {
+        Cursor c = db.query(DATABASE_KATEGORIJA, new String[] {ID_KATEGORIJE, IME_KATEGORIJE, PHOTO_KATEGORIJA},
+                IME_KATEGORIJE + " LIKE '%" + filter + "%'", null, null, null, null);
+
+        List<Kategorija> lista = new ArrayList<>();
+        if(c.moveToFirst()) {
+            do {
+                Kategorija kategorija = new Kategorija();
+
+                kategorija.setId(c.getLong(c.getColumnIndex(ID_KATEGORIJE)));
+                kategorija.setImeKategorije(c.getString(c.getColumnIndex(IME_KATEGORIJE)));
+                kategorija.setPhotoKategorije(c.getString(c.getColumnIndex(PHOTO_KATEGORIJA)));
                 lista.add(kategorija);
             } while (c.moveToNext());
         }
@@ -165,7 +184,7 @@ public class DBRAdapter {
         return kategorija;
     }
 
-    public void insertRecept(Recept recept) {
+    public long insertRecept(Recept recept) {
         ContentValues initialValues = new ContentValues();
 
         initialValues.put(IME_RECEPTA, recept.getImeRecepta());
@@ -182,6 +201,7 @@ public class DBRAdapter {
         for(String u : upute) {
             insertUpute(id, u);
         }
+        return id;
     }
 
     public void deleteRecept(long id) {
@@ -200,7 +220,7 @@ public class DBRAdapter {
             query = "SELECT * FROM " + DATABASE_RECEPT;
         } else {
             query = "SELECT * FROM " + DATABASE_RECEPT + " WHERE "
-                    + IME_RECEPTA + " LIKE " + filter;
+                    + IME_RECEPTA + " LIKE '%" + filter + "%'";
         }
 
         List<Recept> recepti = new ArrayList<>();
@@ -208,14 +228,6 @@ public class DBRAdapter {
 
         if(c.moveToFirst()) {
             do {
-                /*Recept r = new Recept();
-                r.setId(c.getLong(c.getColumnIndex(ID_RECEPTA)));
-                r.setImeRecepta(c.getString(c.getColumnIndex(IME_RECEPTA)));
-                r.setPhotoRecept(c.getString(c.getColumnIndex(PHOTO_RECEPT)));
-                r.setNotes(c.getString(c.getColumnIndex(NOTES)));
-                r.setSastojci(getAllSastojciZaRecept(r.getId()));
-                r.setUpute(getAllUputeZaRecept(r.getId()));*/
-
                 recepti.add(getReceptZaId(c.getLong(c.getColumnIndex(ID_RECEPTA))));
             } while(c.moveToNext());
         }
