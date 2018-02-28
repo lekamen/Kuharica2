@@ -15,11 +15,14 @@ import java.util.Set;
 public class SearchActivity extends AppCompatActivity {
 
     private RecyclerView searchCategory;
-    private RecyclerView.LayoutManager layoutManager;
-
     private RecyclerView searchRecepts;
+
+    private RecyclerView.LayoutManager layoutManagerKategorija;
+    private RecyclerView.LayoutManager layoutManagerRecept;
+
     private DBRAdapter db;
     private KategorijaAdapter kategorijaAdapter;
+    private ReceptAdapter receptAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +34,10 @@ public class SearchActivity extends AppCompatActivity {
         searchRecepts = (RecyclerView)findViewById(R.id.searchRecepts);
         searchRecepts.setHasFixedSize(true);
 
-        layoutManager = new LinearLayoutManager(this);
-        searchCategory.setLayoutManager(layoutManager);
-        searchRecepts.setLayoutManager(layoutManager);
+        layoutManagerKategorija = new LinearLayoutManager(this);
+        layoutManagerRecept = new LinearLayoutManager(this);
+        searchCategory.setLayoutManager(layoutManagerKategorija);
+        searchRecepts.setLayoutManager(layoutManagerRecept);
     }
 
     public void pretraziKuharicu(View view) {
@@ -54,17 +58,17 @@ public class SearchActivity extends AppCompatActivity {
         db = new DBRAdapter(this);
         db.open();
 
+        List<Recept> lista = db.searchReceptiByFilter(pretraga);
         //koristimo skup da se ne ponavljaju
-        Set<Recept> skup = new HashSet<>();
-        skup.addAll(db.searchReceptiByFilter(pretraga));
-        skup.addAll(db.searchSastojkeIUputeByFilter(pretraga));
-        db.close();
+        List<Recept> listaSastojakaIUputa = db.searchSastojkeIUputeByFilter(pretraga);
 
-        List<Recept> lista = new ArrayList<>();
-        lista.addAll(skup);
+        for(Recept r : listaSastojakaIUputa) {
+            if(!lista.contains(r)) {
+                lista.add(r);
+            }
+        }
 
-        //adapter za recepte treba
-        //searchRecepts.setAdapter(receptAdapter);
-
+        receptAdapter = new ReceptAdapter(lista, this, searchRecepts);
+        searchRecepts.setAdapter(receptAdapter);
     }
 }

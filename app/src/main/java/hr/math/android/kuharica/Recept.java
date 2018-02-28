@@ -72,4 +72,18 @@ public class Recept {
     public void setNotes(String notes) {
         this.notes = notes;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Recept))
+            return false;
+
+        Recept other = (Recept)obj;
+        return other.getId() == id;
+    }
+
+    @Override
+    public int hashCode() {
+        return (id + imeRecepta).hashCode();
+    }
 }

@@ -185,15 +185,15 @@ public class DBRAdapter {
         return lista;
     }
 
-    //vraca skup recepata koji u sastojcima i uputama sadrzavaju filter
-    public Set<Recept> searchSastojkeIUputeByFilter(String filter) {
+    //vraca listu recepata koji u sastojcima i uputama sadrzavaju filter
+    public List<Recept> searchSastojkeIUputeByFilter(String filter) {
         Cursor c = db.query(DATABASE_SASTOJCI, null, TEKST_SASTOJKA + " LIKE '%" + filter + "%'",
                 null, null, null, null);
-        Set<Recept> skup = new HashSet<>();
+        List<Recept> lista = new ArrayList<>();
         if(c.moveToFirst()) {
             do {
                 Recept recept = getReceptZaId(c.getLong(c.getColumnIndex(ID_RECEPTA)));
-                skup.add(recept);
+                lista.add(recept);
             } while(c.moveToNext());
         }
 
@@ -202,10 +202,10 @@ public class DBRAdapter {
         if(c.moveToFirst()) {
             do {
                 Recept recept = getReceptZaId(c.getLong(c.getColumnIndex(ID_RECEPTA)));
-                skup.add(recept);
+                lista.add(recept);
             } while(c.moveToNext());
         }
-        return skup;
+        return lista;
     }
 
     public Kategorija getKategorija(long id) throws SQLException {
