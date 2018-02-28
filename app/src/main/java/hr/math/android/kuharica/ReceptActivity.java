@@ -52,7 +52,7 @@ public class ReceptActivity extends AppCompatActivity {
         temp_list.add("treci");
         test_recept.setSastojci(temp_list);
         test_recept.setNotes("blabla blabla bla");
-        test_recept.setUpute(Arrays.asList("korak 1","peci 3 minute", "korak 3: mijesi 2min"));
+        test_recept.setUpute(Arrays.asList("korak 1 min","peci 3 minute", "korak 3: mijesi 2min"));
         test_recept.setPhotoRecept("");
 
         ID = db.insertRecept(test_recept);
