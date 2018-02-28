@@ -20,6 +20,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".SearchActivity"></activity>
+        <activity android:name=".ReceptActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="true"></activity>
+        <activity android:name=".CategoryActivity"></activity>
     </application>
 
 </manifest>
