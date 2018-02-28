@@ -29,6 +29,7 @@
             android:orientation="vertical">
 
             <com.github.clans.fab.Label
+                android:id="@+id/labelPretragaKategorije"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="PRETRAGA PO KATEGORIJAMA"

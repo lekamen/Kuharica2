@@ -2,12 +2,12 @@
     <string name="app_name">Kuharica</string>
     <string name="action_settings">Settings</string>
     <string name="alertDialogTitle1">Izaberite opciju</string>
-    <string name="alertDialogMessage1">Azurirajte ili izbrisite recept?</string>
-    <string name="alertDialogPositive">Azuriraj</string>
-    <string name="alertDialogNeutral">Izbrisi</string>
+    <string name="alertDialogMessage1">Ažurirajte ili izbrišite recept?</string>
+    <string name="alertDialogPositive">Ažuriraj</string>
+    <string name="alertDialogNeutral">Izbriši</string>
     <string name="alertDialogNegative">Odustani</string>
-    <string name="omog_split_view">Omoguci split view</string>
-    <string name="threedots"><![CDATA[&#8942]]></string>
+    <string name="omog_split_view">Omogući split view</string>
+    <string name="searchCat">Pretražite kategoriju...</string>
 
     <!---
         IMENA VARIJABLI U SHARED PREFRENCES

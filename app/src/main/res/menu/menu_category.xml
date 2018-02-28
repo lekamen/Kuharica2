@@ -4,6 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="hr.math.android.kuharica.CategoryActivity">
     <item
+        android:id="@+id/search"
+        android:icon= "@android:drawable/ic_menu_search"
+        android:title="Search"
+        app:showAsAction="always"/>
+
+    <item
         android:id="@+id/split_view_settings"
         android:checkable="true"
         android:orderInCategory="100"

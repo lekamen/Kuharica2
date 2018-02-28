@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="15dp" >
 
@@ -29,17 +29,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/nameRecipe"/>
-
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/recipeOptions"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="@string/threedots"
-                android:textAppearance="?android:textAppearanceLarge"
-                />
         </LinearLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

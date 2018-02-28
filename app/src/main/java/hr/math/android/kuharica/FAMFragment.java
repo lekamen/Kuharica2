@@ -57,8 +57,6 @@ public class FAMFragment extends Fragment {
             @Override
             public void onMenuToggle(boolean opened) {
 
-
-
             }
         });
     }
