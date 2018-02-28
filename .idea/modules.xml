@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Kuharica.iml" filepath="$PROJECT_DIR$/Kuharica.iml" />
+      <module fileurl="file://C:\Users\Gim\Documents\GitHub\Kuharica\Kuharica.iml" filepath="C:\Users\Gim\Documents\GitHub\Kuharica\Kuharica.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\Gim\Documents\GitHub\Kuharica\app\app.iml" filepath="C:\Users\Gim\Documents\GitHub\Kuharica\app\app.iml" />
     </modules>
   </component>
 </project>
