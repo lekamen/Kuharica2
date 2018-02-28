@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         navigationView.setCheckedItem(R.id.home);
-
     }
 
     NavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {

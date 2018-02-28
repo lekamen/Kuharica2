@@ -38,4 +38,8 @@ public class SearchActivity extends AppCompatActivity {
         searchCategory.setAdapter(kategorijaAdapter);
         db.close();
     }
+
+    private void pretraziImenaRecepata(String pretraga) {
+
+    }
 }
