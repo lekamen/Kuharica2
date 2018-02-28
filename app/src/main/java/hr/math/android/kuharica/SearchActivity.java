@@ -70,5 +70,6 @@ public class SearchActivity extends AppCompatActivity {
 
         receptAdapter = new ReceptAdapter(lista, this, searchRecepts);
         searchRecepts.setAdapter(receptAdapter);
+        db.close();
     }
 }

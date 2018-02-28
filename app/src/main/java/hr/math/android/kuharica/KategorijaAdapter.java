@@ -86,11 +86,10 @@ public class KategorijaAdapter extends RecyclerView.Adapter<KategorijaAdapter.Vi
                 Intent goToCategoryIntent = new Intent(context, CategoryActivity.class);
 
                 Bundle mBundle = new Bundle();
-                mBundle.putLong("categoryId", position);
+                mBundle.putLong("categoryId", kategorija.getId());
 
                 goToCategoryIntent.putExtras(mBundle);
                 context.startActivity(goToCategoryIntent);
-
             }
         });
     }

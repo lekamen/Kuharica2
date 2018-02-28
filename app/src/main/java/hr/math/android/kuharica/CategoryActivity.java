@@ -19,45 +19,45 @@ public class CategoryActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private RecipeInCategoryAdapter adapter;
+    private ReceptAdapter adapterRecept;
     private DBRAdapter db;
-    private String filter = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
 
-        //initialize the variables
         mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
-        // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         //populate recyclerview
         Intent categoryIntent = getIntent();
+        db = new DBRAdapter(this);
+        db.open();
+        setTitle(db.getKategorija(categoryIntent.getExtras().getLong("categoryId")).getImeKategorije());
+        db.close();
         populaterecyclerView(categoryIntent.getExtras());
     }
 
     private void populaterecyclerView(Bundle mBundle){
 
-        db = new DBRAdapter(this);
-        List<Recept> categoryRecipes = null;
+        //db = new DBRAdapter(this);
 
         db.open();
-        categoryRecipes = db.getAllReceptiFromKategorija(mBundle.getLong("categoryId"));
+        List<Recept> categoryRecipes = db.getAllReceptiFromKategorija(mBundle.getLong("categoryId"));
         db.close();
 
-        adapter = new RecipeInCategoryAdapter(categoryRecipes, this, mRecyclerView);
-        mRecyclerView.setAdapter(adapter);
+        adapterRecept = new ReceptAdapter(categoryRecipes, this, mRecyclerView);
+        mRecyclerView.setAdapter(adapterRecept);
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        adapter.notifyDataSetChanged();
+        adapterRecept.notifyDataSetChanged();
     }
 
     @Override
