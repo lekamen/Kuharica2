@@ -14,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,6 +45,22 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
+        recyclerView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+            @Override
+            public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+                MainActivity.super.onCreateContextMenu(menu, view, contextMenuInfo);
+                menu.add(0, 0, 0, "delete").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+
+                        //do what u want
+                        return true;
+                    }
+
+
+                });
+            }
+        });
 
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -140,4 +157,21 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void noviRecept(View view) {
+        Toast.makeText(this, "novi recept", Toast.LENGTH_SHORT).show();
+    }
+
+    public void novaKategorija(View view) {
+        Intent intent = new Intent(this, NovaKategorijaActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        db.open();
+        kategorijaAdapter.setData(db.getAllKategorije());
+        db.close();
+        kategorijaAdapter.notifyDataSetChanged();
+    }
 }

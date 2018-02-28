@@ -1,6 +1,8 @@
 package hr.math.android.kuharica;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -20,6 +22,8 @@ public class FAMFragment extends Fragment {
     private com.github.clans.fab.FloatingActionButton famKategorija;
     private com.github.clans.fab.FloatingActionButton famRecept;
 
+    private Handler handler = new Handler();
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -30,36 +34,29 @@ public class FAMFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Log.w("famfragment", "!?");
         floatingActionMenu = (FloatingActionMenu)view.findViewById(R.id.menu_fam);
         floatingActionMenu.hideMenuButton(false);
 
         famKategorija = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.fabKategorija);
         famRecept = (com.github.clans.fab.FloatingActionButton)view.findViewById(R.id.fabRecept);
 
-        famKategorija.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //za kategoriju novu
-            }
-        });
-
-        famRecept.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //za novi recept
-            }
-        });
-
-
         famKategorija.setLabelText("Nova kategorija");
         famRecept.setLabelText("Novi recept");
-        floatingActionMenu.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
+
+    }
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        int delay = 400;
+        handler.postDelayed(new Runnable() {
             @Override
-            public void onMenuToggle(boolean opened) {
-
-
-
+            public void run() {
+                floatingActionMenu.showMenuButton(true);
             }
-        });
+        }, delay);
     }
 }
