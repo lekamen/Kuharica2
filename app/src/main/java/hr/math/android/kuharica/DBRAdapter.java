@@ -9,7 +9,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by mabel on 27-Feb-18.
@@ -167,6 +169,43 @@ public class DBRAdapter {
             } while (c.moveToNext());
         }
         return lista;
+    }
+
+    public List<Recept> searchReceptiByFilter(String filter) {
+        Cursor c = db.query(DATABASE_RECEPT, null, IME_RECEPTA + " LIKE '%" + filter + "%'",
+                null, null, null, null);
+
+        List<Recept> lista = new ArrayList<>();
+        if(c.moveToFirst()) {
+            do {
+                Recept recept = getReceptZaId(c.getLong(c.getColumnIndex(ID_RECEPTA)));
+                lista.add(recept);
+            } while (c.moveToNext());
+        }
+        return lista;
+    }
+
+    //vraca skup recepata koji u sastojcima i uputama sadrzavaju filter
+    public Set<Recept> searchSastojkeIUputeByFilter(String filter) {
+        Cursor c = db.query(DATABASE_SASTOJCI, null, TEKST_SASTOJKA + " LIKE '%" + filter + "%'",
+                null, null, null, null);
+        Set<Recept> skup = new HashSet<>();
+        if(c.moveToFirst()) {
+            do {
+                Recept recept = getReceptZaId(c.getLong(c.getColumnIndex(ID_RECEPTA)));
+                skup.add(recept);
+            } while(c.moveToNext());
+        }
+
+        c = db.query(DATABASE_UPUTE, null, TEKST_UPUTE + " LIKE '%" + filter + "%'",
+                null, null, null, null);
+        if(c.moveToFirst()) {
+            do {
+                Recept recept = getReceptZaId(c.getLong(c.getColumnIndex(ID_RECEPTA)));
+                skup.add(recept);
+            } while(c.moveToNext());
+        }
+        return skup;
     }
 
     public Kategorija getKategorija(long id) throws SQLException {
