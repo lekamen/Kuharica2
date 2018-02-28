@@ -8,32 +8,65 @@
     tools:context="hr.math.android.kuharica.AddRecipeActivity">
     
     <EditText
+        android:id="@+id/EditText_recipeName"
         android:layout_width="match_parent"
         android:layout_weight="2"
         android:layout_height="wrap_content" 
         android:hint="@string/addRecipe_recipeNameHint"/>
 
-    <ListView
-        android:id="@+id/ingredientsListView"
-        android:layout_width="wrap_content"
+    <ScrollView
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="100">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    </ListView>
+            <ListView
+                android:id="@+id/ingredientsListView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true" />
 
-    <EditText
-        android:id="@+id/ingredientEditText"
-        android:layout_width="match_parent"
-        android:layout_weight="2"
-        android:layout_height="wrap_content"
-        android:hint="@string/addRecipe_ingredientHint"/>
+            <EditText
+                android:id="@+id/EditText_ingredient"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ingredientsListView"
+                android:hint="@string/addRecipe_ingredientHint"/>
+
+            <ListView
+                android:id="@+id/stepsListView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/EditText_ingredient"/>
+
+            <EditText
+                android:id="@+id/EditText_step"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/stepsListView"
+                android:hint="@string/addRecipe_recipeStepHint"/>
+
+            <EditText
+                android:id="@+id/recipeNotes"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_below="@+id/EditText_step"
+                android:hint="@string/addRecipe_recipeNotesHint"/>
+
+        </RelativeLayout>
+
+    </ScrollView>
 
     <RelativeLayout
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
-        
+        android:layout_weight="0">
+
+
+
         <View
             android:id="@+id/fakeView"
             android:layout_width="0dp"
@@ -41,18 +74,29 @@
             android:layout_centerInParent="true"/>
 
         <Button
+            android:id="@+id/ingredientBtn"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignEnd="@+id/fakeView"
-            android:text="@string/addRecipe_ingredientBtnText"/>
+            android:text="@string/addRecipe_ingredientBtnText"
+            android:onClick="addBtnClick"/>
 
         <Button
+            android:id="@+id/stepBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignStart="@+id/fakeView"
-            android:text="@string/addRecipe_saveBtnText"/>
+            android:text="@string/addRecipe_stepBtnText"
+            android:onClick="stepBtnClick"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/stepBtn"
+            android:text="@string/addRecipe_saveBtnText"
+            android:onClick="saveBtnClick"/>
 
     </RelativeLayout>
 
