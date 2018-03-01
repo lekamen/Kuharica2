@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -50,7 +53,28 @@ public class CategoryActivity extends AppCompatActivity {
 
         setTitle(mcategory.getImeKategorije());
 
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(navigationItemSelectedListener);
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment, new FAMFragment()).commit();
+        }
+
+        navigationView.setCheckedItem(R.id.home);
+
     }
+
+    NavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(MenuItem item) {
+            Fragment fragment = null;
+            final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            fragment = new FAMFragment();
+            ft.replace(R.id.fragment, fragment).commit();
+            return true;
+        }
+    };
 
     @Override
     protected void onResume() {
