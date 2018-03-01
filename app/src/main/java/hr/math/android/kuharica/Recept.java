@@ -14,6 +14,7 @@ public class Recept {
     private List<String> sastojci;
     private List<String> upute;
     private String notes;
+    private Integer brOsoba;
 
     public Recept() {}
     public Recept(long id, String imeRecepta, String photoRecept, List<String> sastojci, List<String> upute, String notes) {
@@ -71,5 +72,27 @@ public class Recept {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public Integer getBrOsoba() {
+        return brOsoba;
+    }
+
+    public void setBrOsoba(Integer brOsoba) {
+        this.brOsoba = brOsoba;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Recept))
+            return false;
+
+        Recept other = (Recept)obj;
+        return other.getId() == id;
+    }
+
+    @Override
+    public int hashCode() {
+        return (id + imeRecepta).hashCode();
     }
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/uredi_recept"
+        android:title="Uredi recept"
+        app:showAsAction="never"
+        android:icon="@drawable/fab_add"
+        android:iconTint="@color/colorAccent"
+        android:iconTintMode="src_over">
+
+    </item>
+    <item
+        android:id="@+id/obrisi_recept"
+        android:title="Obriši recept"
+        app:showAsAction="never"
+        android:icon="@drawable/stopwatch"
+        android:iconTint="@color/colorAccent"></item>
+</menu>

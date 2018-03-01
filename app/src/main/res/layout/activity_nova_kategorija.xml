@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="hr.math.android.kuharica.NovaKategorijaActivity">
+
+    <com.github.clans.fab.Label
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Unesite ime kategorije"
+        android:textSize="20dp"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/imeKategorije"
+        />
+    <com.github.clans.fab.Label
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Takva kategorija već postoji, odaberite drugo ime"
+        android:textColor="@color/colorAccent"
+        android:visibility="invisible"
+        android:id="@+id/imePostojiLabel"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Biraj sliku"
+            android:id="@+id/birajSliku"
+            android:onClick="birajSliku"/>
+
+        <com.github.clans.fab.Label
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/statusSlike"
+            android:visibility="invisible"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Napravi novu kategoriju"
+            android:enabled="false"
+            android:id="@+id/novaKategorija"
+            android:onClick="napraviNovuKategoriju"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Odustani"
+            android:id="@+id/odustani"
+            android:onClick="odustani"/>
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -25,21 +25,46 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.v7.widget.RecyclerView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:id="@+id/searchCategory"/>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <com.github.clans.fab.Label
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="PRETRAGA PO KATEGORIJAMA"
                 android:layout_gravity="left"
-                android:id="@+id/label"/>
+                android:id="@+id/labelPretragaKategorije"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="left">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/searchCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+            </LinearLayout>
+
+            <com.github.clans.fab.Label
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="PRETRAGA PO RECEPTIMA"
+                android:layout_gravity="left"
+                android:layout_marginTop="20dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/searchRecepts"/>
+            </LinearLayout>
         </LinearLayout>
+
     </ScrollView>
 
 </LinearLayout>

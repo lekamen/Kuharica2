@@ -25,6 +25,7 @@ public class DBRAdapter {
     static final String IME_RECEPTA = "ime_recepta";
     static final String PHOTO_RECEPT = "photo_path";
     static final String NOTES = "notes";
+    static final String BR_OSOBA = "br_osoba";
 
     static final String ID_SASTOJKA = "id_sastojka";
     static final String TEKST_SASTOJKA = "tekst_sastojka";
@@ -50,7 +51,8 @@ public class DBRAdapter {
     static final String DATABASE_CREATE_RECEPT =
             "create table " + DATABASE_RECEPT + " (" + ID_RECEPTA + " integer primary key autoincrement, "
                     + IME_RECEPTA + " text not null, "
-                    + PHOTO_RECEPT + " text, " + NOTES + " text);";
+                    + PHOTO_RECEPT + " text, " + NOTES + " text, " +
+                    BR_OSOBA + " integer);";
 
     static final String DATABASE_CREATE_KATEGORIJA =
             "create table " + DATABASE_KATEGORIJA + " (" + ID_KATEGORIJE + " integer primary key autoincrement, "
@@ -59,7 +61,6 @@ public class DBRAdapter {
     static final String DATABASE_CREATE_SASTOJCI =
             "create table " + DATABASE_SASTOJCI + " (" + ID_RECEPTA + " integer , "
                     + TEKST_SASTOJKA + " text not null);";
-    //+ ID_RECEPTA + ", " + ID_SASTOJKA + " ));";
 
     static final String DATABASE_CREATE_UPUTE =
             "create table " + DATABASE_UPUTE + " (" + ID_RECEPTA + " integer, "
@@ -169,6 +170,43 @@ public class DBRAdapter {
         return lista;
     }
 
+    public List<Recept> searchReceptiByFilter(String filter) {
+        Cursor c = db.query(DATABASE_RECEPT, null, IME_RECEPTA + " LIKE '%" + filter + "%'",
+                null, null, null, null);
+
+        List<Recept> lista = new ArrayList<>();
+        if(c.moveToFirst()) {
+            do {
+                Recept recept = getReceptZaId(c.getLong(c.getColumnIndex(ID_RECEPTA)));
+                lista.add(recept);
+            } while (c.moveToNext());
+        }
+        return lista;
+    }
+
+    //vraca listu recepata koji u sastojcima i uputama sadrzavaju filter
+    public List<Recept> searchSastojkeIUputeByFilter(String filter) {
+        Cursor c = db.query(DATABASE_SASTOJCI, null, TEKST_SASTOJKA + " LIKE '%" + filter + "%'",
+                null, null, null, null);
+        List<Recept> lista = new ArrayList<>();
+        if(c.moveToFirst()) {
+            do {
+                Recept recept = getReceptZaId(c.getLong(c.getColumnIndex(ID_RECEPTA)));
+                lista.add(recept);
+            } while(c.moveToNext());
+        }
+
+        c = db.query(DATABASE_UPUTE, null, TEKST_UPUTE + " LIKE '%" + filter + "%'",
+                null, null, null, null);
+        if(c.moveToFirst()) {
+            do {
+                Recept recept = getReceptZaId(c.getLong(c.getColumnIndex(ID_RECEPTA)));
+                lista.add(recept);
+            } while(c.moveToNext());
+        }
+        return lista;
+    }
+
     public Kategorija getKategorija(long id) throws SQLException {
         Cursor c = db.query(true, DATABASE_KATEGORIJA, new String[]{ID_KATEGORIJE, IME_KATEGORIJE, PHOTO_KATEGORIJA},
                 ID_KATEGORIJE + "=" + id, null, null, null, null, null);
@@ -190,6 +228,11 @@ public class DBRAdapter {
         initialValues.put(IME_RECEPTA, recept.getImeRecepta());
         initialValues.put(PHOTO_RECEPT, recept.getPhotoRecept());
         initialValues.put(NOTES, recept.getNotes());
+        if(recept.getBrOsoba() == null) {
+            initialValues.put(BR_OSOBA, 1);
+        } else {
+            initialValues.put(BR_OSOBA, recept.getBrOsoba());
+        }
         long id = db.insert(DATABASE_RECEPT, null, initialValues);
 
         //ubaci sastojke i upute u svoje baze s id-em
@@ -210,6 +253,7 @@ public class DBRAdapter {
         //za taj id obriši i sve njegove sastojke
         db.delete(DATABASE_SASTOJCI, ID_RECEPTA + "=" + id, null);
         db.delete(DATABASE_UPUTE, ID_RECEPTA + "=" + id, null);
+        db.delete(DATABASE_RECEPT_U_KATEGORIJI, ID_RECEPTA + "=" + id, null);
     }
 
     //za pretrazivanje po svim receptima - za dobivanje svih staviti ""
@@ -248,15 +292,38 @@ public class DBRAdapter {
             r.setNotes(c.getString(c.getColumnIndex(NOTES)));
             r.setSastojci(getAllSastojciZaRecept(r.getId()));
             r.setUpute(getAllUputeZaRecept(r.getId()));
+            r.setBrOsoba(c.getInt(c.getColumnIndex(BR_OSOBA)));
         }
         return r;
+    }
+
+    public void updateRecept(Recept recept) {
+        ContentValues values = new ContentValues();
+        values.put(IME_RECEPTA, recept.getImeRecepta());
+        values.put(NOTES, recept.getNotes());
+        values.put(BR_OSOBA, recept.getBrOsoba());
+        values.put(PHOTO_RECEPT, recept.getPhotoRecept());
+
+        db.update(DATABASE_RECEPT, values, ID_RECEPTA + "=" + recept.getId(), null);
+
+        deleteAllSastojciZaRecept(recept.getId());
+        deleteAllUputeZaRecept(recept.getId());
+
+        List<String> sastojci = recept.getSastojci();
+        List<String> upute = recept.getUpute();
+        for(String s : sastojci) {
+            insertSastojak(recept.getId(), s);
+        }
+        for(String u : upute) {
+            insertUpute(recept.getId(), u);
+        }
     }
 
     //za zadani id kategorije nadji sve recepte koji su u kategoriji
     public List<Recept> getAllReceptiFromKategorija(long idKategorije) throws SQLException {
 
         Cursor c = db.query(DATABASE_RECEPT_U_KATEGORIJI, new String[]{ID_RECEPTA},
-                       ID_KATEGORIJE + "=" + idKategorije, null, null, null, null);
+                ID_KATEGORIJE + "=" + idKategorije, null, null, null, null);
 
         List<Recept> recepti = new ArrayList<>();
         if(c.moveToFirst()) {
@@ -270,7 +337,7 @@ public class DBRAdapter {
 
     //za zadani string provjeri sadržava li ime recepta taj string
     //public Cursor getAllReceptiKaoTekst(String tekst) throws SQLException {
-     //   return db.query(DATABASE_RECEPT, new String[] {IME_RECEPTA, PHOTO_RECEPT, NOTES},
+    //   return db.query(DATABASE_RECEPT, new String[] {IME_RECEPTA, PHOTO_RECEPT, NOTES},
     //            IME_RECEPTA + " LIKE " + tekst, null, null, null, null, null);
     //}
 
@@ -288,12 +355,12 @@ public class DBRAdapter {
         return db.insert(DATABASE_UPUTE, null, values);
     }
 
-    public boolean deleteSastojak(long idRecepta, long idSastojak) {
-        return db.delete(DATABASE_SASTOJCI, ID_RECEPTA + "=" + idRecepta + " AND " + ID_SASTOJKA + "=" + idSastojak, null) > 0;
+    public boolean deleteAllSastojciZaRecept(long idRecepta) {
+        return db.delete(DATABASE_SASTOJCI, ID_RECEPTA + "=" + idRecepta, null) > 0;
     }
 
-    public boolean deleteUputa(long idRecepta, long idUpute) {
-        return db.delete(DATABASE_UPUTE, ID_RECEPTA + "=" + idRecepta + " AND " + ID_UPUTE + "=" + idUpute, null) > 0;
+    public boolean deleteAllUputeZaRecept(long idRecepta) {
+        return db.delete(DATABASE_UPUTE, ID_RECEPTA + "=" + idRecepta, null) > 0;
     }
 
     //za zadani recept vrati sve sastojke
