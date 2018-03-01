@@ -45,22 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-            @Override
-            public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
-                MainActivity.super.onCreateContextMenu(menu, view, contextMenuInfo);
-                menu.add(0, 0, 0, "delete").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
 
-                        //do what u want
-                        return true;
-                    }
-
-
-                });
-            }
-        });
 
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -103,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
              r.setImeRecepta("palačinke");
              r.setPhotoRecept(String.valueOf(R.drawable.pancakes));
              r.setNotes(null);
+             r.setBrOsoba(4);
              r.setSastojci(Arrays.asList("300g brašna", "3 kašike šećera", "3 jaja"));
              r.setUpute(Arrays.asList("umiješati brašno sa šećerom", "zagrijati tavu 3 minute", "peći palačinke"));
 
@@ -134,8 +120,20 @@ public class MainActivity extends AppCompatActivity {
              r1.setId(db.insertRecept(r1));
              kat.setId(db.insertKategorija(kat));
              db.insertReceptUKategoriju(kat, r1);
+
+             kat = new Kategorija("Bez kategorije", null);
+             db.insertKategorija(kat);
+
         }
 
+        Log.w("broj osoba: " , db.getAllRecepti("").size() + " " + db.getAllRecepti("").get(0).getBrOsoba() +
+                " "  + db.getAllRecepti("").get(1).getBrOsoba());
+
+         Recept r = db.getAllRecepti("").get(0);
+         Log.w("recept", r.getSastojci().toString());
+         r.setSastojci(Arrays.asList("probaaaa", "2"));
+         db.updateRecept(r);
+         Log.w("recept", r.getSastojci().toString());
         kategorijaAdapter = new KategorijaAdapter(db.getAllKategorije(), this, recyclerView);
         recyclerView.setAdapter(kategorijaAdapter);
         db.close();

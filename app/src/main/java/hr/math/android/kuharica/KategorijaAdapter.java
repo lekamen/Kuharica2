@@ -2,12 +2,13 @@ package hr.math.android.kuharica;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,8 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
@@ -90,16 +93,15 @@ public class KategorijaAdapter extends RecyclerView.Adapter<KategorijaAdapter.Vi
                 uDrawableFolderu = false;
             }
         }
-        Log.w("result", uDrawableFolderu + " " + kategorija.getPhotoKategorije());
-        Log.w("result", "tu sam" + kategorija.getPhotoKategorije());
+
         if(uDrawableFolderu) {
             Picasso.with(context).load(vrijednost)
                     .placeholder(R.drawable.default_kategorija).into(holder.image);
         } else {
-            Picasso.with(context).load(Uri.parse(kategorija.getPhotoKategorije()))
-                    .placeholder(R.drawable.default_kategorija).into(holder.image);
+            loadImageFromStorage(kategorija.getPhotoKategorije(), holder);
+            /*Picasso.with(context).load(kategorija.getPhotoKategorije())
+                    .placeholder(R.drawable.default_kategorija).into(holder.image);*/
         }
-
 
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,6 +127,22 @@ public class KategorijaAdapter extends RecyclerView.Adapter<KategorijaAdapter.Vi
                 return true;
             }
         });
+
+    }
+
+    private void loadImageFromStorage(String path, ViewHolder holder)
+    {
+
+        try {
+            File f=new File(path);
+            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
+
+            holder.image.setImageBitmap(b);
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
 
     }
 

@@ -34,7 +34,6 @@ public class FAMFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Log.w("famfragment", "!?");
         floatingActionMenu = (FloatingActionMenu)view.findViewById(R.id.menu_fam);
         floatingActionMenu.hideMenuButton(false);
 
