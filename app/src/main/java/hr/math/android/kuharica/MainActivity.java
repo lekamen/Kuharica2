@@ -109,11 +109,14 @@ public class MainActivity extends AppCompatActivity {
              kat.setId(db.insertKategorija(kat));
              db.insertReceptUKategoriju(kat, r1);
 
-             kat = new Kategorija("Bez kategorije", null);
-             db.insertKategorija(kat);
+             Kategorija kat1 = new Kategorija("Bez kategorije", String.valueOf(R.drawable.ic_close_black_24dp));
+             db.insertKategorija(kat1);
          }
 
-        Log.w("broj osoba: " , db.getAllRecepti("").size() + " " + db.getAllRecepti("").get(0).getBrOsoba() +
+         for(Kategorija k : db.getAllKategorije()) {
+             Log.w("kategorije", "slika " + k.getPhotoKategorije());
+         }
+        Log.w("broj osoba: " , db.getAllRecepti("") + " " + db.getAllRecepti("").get(0).getBrOsoba() +
                 " "  + db.getAllRecepti("").get(1).getBrOsoba());
 
          Recept r = db.getAllRecepti("").get(0);

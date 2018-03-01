@@ -161,9 +161,6 @@ public class ReceptActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.uredi_recept:
-                Intent intent = new Intent(ctx, AddRecipeActivity.Class);
-                intent.putExtra("ID", ID);
-                ctx.startActivity(intent);
 
                 return true;
             case R.id.obrisi_recept:
