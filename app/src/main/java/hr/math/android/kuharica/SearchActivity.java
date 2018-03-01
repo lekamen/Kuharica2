@@ -1,9 +1,6 @@
 package hr.math.android.kuharica;
 
-<<<<<<< HEAD
-=======
 import android.content.Intent;
->>>>>>> 45aae13605f01c3385ef22934e059e15ffdbb17c
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -87,10 +84,7 @@ public class SearchActivity extends AppCompatActivity {
         db.close();
     }
 
-<<<<<<< HEAD
-    private void pretraziImenaRecepata(String pretraga) {
 
-=======
     private void pretraziRecepte(String pretraga) {
         db = new DBRAdapter(this);
         db.open();
@@ -119,6 +113,5 @@ public class SearchActivity extends AppCompatActivity {
 
         receptAdapter = new ReceptAdapter(lista, this, searchRecepts);
         searchRecepts.setAdapter(receptAdapter);
->>>>>>> 45aae13605f01c3385ef22934e059e15ffdbb17c
     }
 }

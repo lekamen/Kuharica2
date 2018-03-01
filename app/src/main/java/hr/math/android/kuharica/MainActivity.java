@@ -148,12 +148,7 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-<<<<<<< HEAD
 
-    private void openSearchActivity() {
-        Intent intent = new Intent(this, SearchActivity.class);
-        startActivity(intent);
-=======
 
     private void openSearchActivity() {
         Intent intent = new Intent(this, SearchActivity.class);
@@ -176,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
         kategorijaAdapter.setData(db.getAllKategorije());
         db.close();
         kategorijaAdapter.notifyDataSetChanged();
->>>>>>> 45aae13605f01c3385ef22934e059e15ffdbb17c
     }
 
 }

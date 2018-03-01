@@ -1,12 +1,8 @@
 package hr.math.android.kuharica;
 
-<<<<<<< HEAD
-import android.os.Bundle;
-=======
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
->>>>>>> 45aae13605f01c3385ef22934e059e15ffdbb17c
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -44,33 +40,6 @@ public class FAMFragment extends Fragment {
         famKategorija = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.fabKategorija);
         famRecept = (com.github.clans.fab.FloatingActionButton)view.findViewById(R.id.fabRecept);
 
-<<<<<<< HEAD
-        famKategorija.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //za kategoriju novu
-            }
-        });
-
-        famRecept.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //za novi recept
-            }
-        });
-
-
-        famKategorija.setLabelText("Nova kategorija");
-        famRecept.setLabelText("Novi recept");
-        floatingActionMenu.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
-            @Override
-            public void onMenuToggle(boolean opened) {
-
-
-
-            }
-        });
-=======
         famKategorija.setLabelText("Nova kategorija");
         famRecept.setLabelText("Novi recept");
 
@@ -88,6 +57,5 @@ public class FAMFragment extends Fragment {
                 floatingActionMenu.showMenuButton(true);
             }
         }, delay);
->>>>>>> 45aae13605f01c3385ef22934e059e15ffdbb17c
     }
 }
