@@ -10,4 +10,5 @@
     <string name="addRecipe_recipeNotesHint">Enter recipe notes</string>
     <string name="addRecipe_recipeStepHint">Enter next step</string>
     <string name="addRecipe_stepBtnText">Add step</string>
+    <string name="addRecipe_pictureBtnText">Select picture</string>
 </resources>

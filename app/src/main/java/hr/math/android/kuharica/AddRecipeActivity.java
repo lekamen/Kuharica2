@@ -1,6 +1,13 @@
 package hr.math.android.kuharica;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,10 +15,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class AddRecipeActivity extends AppCompatActivity {
@@ -26,6 +39,8 @@ public class AddRecipeActivity extends AppCompatActivity {
     String tempIngredient;
     String tempStep;
     String recipeNotesText;
+    String userChoosenTask;
+    ImageView ivImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +56,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         adapterSteps = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stepList);
         stepView = (ListView)findViewById(R.id.stepsListView);
         stepView.setAdapter(adapterSteps);
+        ivImage = (ImageView)findViewById(R.id.recipeImage);
     }
 
     @Override
@@ -111,6 +127,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         stepView = (ListView)findViewById(R.id.stepsListView);
         stepView.setAdapter(adapterSteps);
         setListViewHeightBasedOnChildren(stepView);
+        ivImage = (ImageView)findViewById(R.id.recipeImage);
     }
 
     public void addBtnClick(View view){
@@ -159,6 +176,8 @@ public class AddRecipeActivity extends AppCompatActivity {
         listView.requestLayout();
     }
 
+
+
     public void saveBtnClick(View view){
         EditText editTextName = (EditText)findViewById(R.id.EditText_recipeName);
         recipeName = editTextName.getText().toString();
@@ -181,7 +200,110 @@ public class AddRecipeActivity extends AppCompatActivity {
         DBRAdapter db = new DBRAdapter(this);
         db.open();
         recept.setId(db.insertRecept(recept));
-        Log.w("AddRecipeActivity", db.getReceptZaId(recept.getId()).toString());
+
+        Recept receptIzBaze = db.getReceptZaId(recept.getId());
+        Log.w("MojaKlasa:", receptIzBaze.getImeRecepta());
+        Log.w("MojaKlasa:", receptIzBaze.getNotes());
+
         db.close();
+    }
+
+    public void selectImage(View view) {
+        final CharSequence[] items = { "Take Photo", "Choose from Library",
+                "Cancel" };
+        AlertDialog.Builder builder = new AlertDialog.Builder(AddRecipeActivity.this);
+        builder.setTitle("Add Photo!");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                boolean result=Utility.checkPermission(AddRecipeActivity.this);
+                if (items[item].equals("Take Photo")) {
+                    userChoosenTask="Take Photo";
+                    if(result)
+                        cameraIntent();
+                } else if (items[item].equals("Choose from Library")) {
+                    userChoosenTask="Choose from Library";
+                    if(result)
+                        galleryIntent();
+                } else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private void cameraIntent()
+    {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, 0);
+    }
+
+    private void galleryIntent()
+    {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);//
+        startActivityForResult(Intent.createChooser(intent, "Select File"), 1);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case Utility.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if(userChoosenTask.equals("Take Photo"))
+                        cameraIntent();
+                    else if(userChoosenTask.equals("Choose from Library"))
+                        galleryIntent();
+                } else {
+                    //code for deny
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == 1)
+                onSelectFromGalleryResult(data);
+            else if (requestCode == 0)
+                onCaptureImageResult(data);
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void onSelectFromGalleryResult(Intent data) {
+        Bitmap bm=null;
+        if (data != null) {
+            try {
+                bm = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        ivImage.setImageBitmap(bm);
+    }
+
+    private void onCaptureImageResult(Intent data) {
+        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+        File destination = new File(Environment.getExternalStorageDirectory(),
+                System.currentTimeMillis() + ".jpg");
+        FileOutputStream fo;
+        try {
+            destination.createNewFile();
+            fo = new FileOutputStream(destination);
+            fo.write(bytes.toByteArray());
+            fo.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ivImage.setImageBitmap(thumbnail);
     }
 }
