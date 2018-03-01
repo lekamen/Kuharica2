@@ -1,8 +1,12 @@
 package hr.math.android.kuharica;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +16,9 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
@@ -51,9 +58,11 @@ public class KategorijaAdapter extends RecyclerView.Adapter<KategorijaAdapter.Vi
         this.kategorije = kategorije;
         this.context = context;
         this.recyclerView = recyclerView;
-        Log.w("kategorijaadapter", "velicina " + kategorije.size());
     }
 
+    public void setData(List<Kategorija> kategorije) {
+        this.kategorije = kategorije;
+    }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
@@ -68,14 +77,28 @@ public class KategorijaAdapter extends RecyclerView.Adapter<KategorijaAdapter.Vi
         final Kategorija kategorija = kategorije.get(position);
         holder.imeKategorije.setText(kategorija.getImeKategorije());
         //ako je photoKategorije null onda se uzima defaultni
-        int vrijednost;
-        if(kategorija.getPhotoKategorije() == null) {
+        int vrijednost = 0;
+        String path = kategorija.getPhotoKategorije();
+        boolean uDrawableFolderu = true;
+        if(path == null) {
             vrijednost = R.drawable.default_kategorija;
         } else {
-            vrijednost = Integer.parseInt(kategorija.getPhotoKategorije());
+            //vidi jel slika spremljena vani ili u drawable
+            try {
+                vrijednost = Integer.parseInt(path);
+            } catch (Exception e){
+                uDrawableFolderu = false;
+            }
         }
-        Picasso.with(context).load(vrijednost)
-                .placeholder(R.drawable.default_kategorija).into(holder.image);
+
+        if(uDrawableFolderu) {
+            Picasso.with(context).load(vrijednost)
+                    .placeholder(R.drawable.default_kategorija).into(holder.image);
+        } else {
+            loadImageFromStorage(kategorija.getPhotoKategorije(), holder);
+            /*Picasso.with(context).load(kategorija.getPhotoKategorije())
+                    .placeholder(R.drawable.default_kategorija).into(holder.image);*/
+        }
 
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,6 +106,34 @@ public class KategorijaAdapter extends RecyclerView.Adapter<KategorijaAdapter.Vi
                 Toast.makeText(context, "ucitavanje kategorije", Toast.LENGTH_SHORT).show();
             }
         });
+
+        holder.layout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Toast.makeText(context, "long click", Toast.LENGTH_SHORT).show();
+
+                //izbrisi kategoriju, izbrisi sve iz tablice recepti u kategoriji
+
+                return true;
+            }
+        });
+
+    }
+
+    private void loadImageFromStorage(String path, ViewHolder holder)
+    {
+
+        try {
+            File f=new File(path);
+            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
+
+            holder.image.setImageBitmap(b);
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+
     }
 
     @Override

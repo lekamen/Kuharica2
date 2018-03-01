@@ -1,6 +1,12 @@
 package hr.math.android.kuharica;
 
+<<<<<<< HEAD
 import android.os.Bundle;
+=======
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+>>>>>>> 45aae13605f01c3385ef22934e059e15ffdbb17c
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -20,6 +26,8 @@ public class FAMFragment extends Fragment {
     private com.github.clans.fab.FloatingActionButton famKategorija;
     private com.github.clans.fab.FloatingActionButton famRecept;
 
+    private Handler handler = new Handler();
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -36,6 +44,7 @@ public class FAMFragment extends Fragment {
         famKategorija = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.fabKategorija);
         famRecept = (com.github.clans.fab.FloatingActionButton)view.findViewById(R.id.fabRecept);
 
+<<<<<<< HEAD
         famKategorija.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,5 +70,24 @@ public class FAMFragment extends Fragment {
 
             }
         });
+=======
+        famKategorija.setLabelText("Nova kategorija");
+        famRecept.setLabelText("Novi recept");
+
+    }
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        int delay = 400;
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                floatingActionMenu.showMenuButton(true);
+            }
+        }, delay);
+>>>>>>> 45aae13605f01c3385ef22934e059e15ffdbb17c
     }
 }
