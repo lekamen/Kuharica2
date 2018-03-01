@@ -21,6 +21,7 @@ public class FAMFragment extends Fragment {
     private FloatingActionMenu floatingActionMenu;
     private com.github.clans.fab.FloatingActionButton famKategorija;
     private com.github.clans.fab.FloatingActionButton famRecept;
+    public boolean prikaziObaKruga = true;
 
     private Handler handler = new Handler();
 

@@ -17,4 +17,12 @@
     <string name="splitViewEnabled">splitViewEnabled</string>
     <string name="mPrefs">hr.math.android.kuharica.mPrefrences</string>
     <string name="abecedni_poredak">Abecedni poredak</string>
+    <string name="delete_option">Izbriši</string>
+    <string name="save_option">Spremi</string>
+    <string name="selectall_option">Odaberi sve</string>
+    <string name="cancel_option">Poništi</string>
+    <string name="fileName">Moji recepti</string>
+    <string name="fileSastojciHeader">Sastojci</string>
+    <string name="fileUputeHeader">Upute:</string>
+    <string name="fileNapHeader">Napomene</string>
 </resources>

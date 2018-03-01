@@ -14,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
@@ -51,45 +52,18 @@ public class CategoryActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-
         setTitle(mcategory.getImeKategorije());
 
-
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(navigationItemSelectedListener);
-
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment, new FAMFragment()).commit();
-        }
-
-        navigationView.setCheckedItem(R.id.home);
-
     }
-
-    NavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(MenuItem item) {
-            Fragment fragment = null;
-            final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            fragment = new FAMFragment();
-            ft.replace(R.id.fragment, fragment).commit();
-            return true;
-        }
-    };
 
     @Override
     protected void onResume() {
         super.onResume();
+
         db.open();
         List<Recept> recepti = db.getAllReceptiFromKategorija(mcategory.getId());
         adapter.setData(db.getAllReceptiFromKategorija(mcategory.getId()));
         db.close();
-
-        for(Recept r : recepti){
-            Toast.makeText(this, r.getId() + r.getImeRecepta(), Toast.LENGTH_SHORT).show();
-        }
 
         adapter.notifyDataSetChanged();
     }
@@ -100,15 +74,37 @@ public class CategoryActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
+    public void onSaveInstanceState(Bundle bundle) {
+        List<Recept> odabrani = adapter.getSelectedItems();
+        if(odabrani != null){
+            long[] ids = new long[odabrani.size()];
 
-        // Checks the orientation of the screen
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
-            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
+            int i = 0;
+            for(Recept r : odabrani){
+                ids[i] = r.getId();
+                ++i;
+            }
+
+            for(Recept r : odabrani){
+                bundle.putLongArray("ids", ids);
+            }
         }
+
+        // call superclass to save any view hierarchy
+        super.onSaveInstanceState(bundle);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        if(savedInstanceState != null){
+            long[] ids = savedInstanceState.getLongArray("ids");
+
+            if(ids != null){
+                adapter.setSelectedData(ids);
+                adapter.notifyDataSetChanged();
+            }
+        }
+
     }
 
 
@@ -175,5 +171,9 @@ public class CategoryActivity extends AppCompatActivity {
 
         adapter = new ReceptAdapter(recepti, this, mRecyclerView);
         mRecyclerView.setAdapter(adapter);
+    }
+
+    public void noviRecept(View view) {
+        Toast.makeText(this, "Dodaj novi recept", Toast.LENGTH_SHORT).show();
     }
 }

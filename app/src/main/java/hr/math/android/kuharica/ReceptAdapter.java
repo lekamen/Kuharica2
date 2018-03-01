@@ -3,13 +3,12 @@ package hr.math.android.kuharica;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.SparseBooleanArray;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +20,9 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,11 +43,9 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             multiSelect = true;
 
-            menu.add(0, 4, 0, String.valueOf(getSelectedItemCount()));
-            menu.add(0,0,0,"Izbriši");
-            menu.add(0,1,0,"Spremi");
-            menu.add(0,2,0,"Odaberi sve");
-            menu.add(0,3,0,"Poništi");
+            menu.add(0,0,0, R.string.delete_option);
+            menu.add(0,2,0, R.string.selectall_option);
+            menu.add(0,3,0, R.string.cancel_option);
 
             return true;
         }
@@ -67,10 +67,6 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
                     db.close();
                     selRecepti.clear();
                     notifyDataSetChanged();
-                    mode.finish();
-                    return true;
-                case 1:
-                    Toast.makeText(context, "Spremi", Toast.LENGTH_SHORT ).show();
                     mode.finish();
                     return true;
                 case 2:
@@ -104,20 +100,20 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
 
         public View layout;
 
-        public ViewHolder(View v){
+        public ViewHolder(View v) {
             super(v);
             layout = v;
             image = (ImageView) v.findViewById(R.id.image);
             imeRecepta = (TextView) v.findViewById(R.id.name);
-            cardView = (CardView)v.findViewById(R.id.kartica);
+            cardView = (CardView) v.findViewById(R.id.kartica);
         }
 
-        void update(final Recept r){
+        void update(final Recept r) {
 
             imeRecepta.setText(r.getImeRecepta());
             //ako je photoKategorije null onda se uzima defaultni
             int vrijednost = 1;
-            if(r.getPhotoRecept() == null) {
+            if (r.getPhotoRecept() == null) {
                 vrijednost = R.drawable.default_recept;
             } else {
                 vrijednost = Integer.parseInt(r.getPhotoRecept());
@@ -125,10 +121,10 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
             Picasso.with(context).load(vrijednost)
                     .placeholder(R.drawable.default_recept).into(image);
 
-            if(selRecepti != null){
-                if(selRecepti.contains(r)){
+            if (selRecepti != null) {
+                if (selRecepti.contains(r)) {
                     cardView.setBackgroundColor(Color.LTGRAY);
-                } else{
+                } else {
                     cardView.setBackgroundColor(Color.WHITE);
                 }
             }
@@ -136,7 +132,7 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
             cardView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    ((AppCompatActivity)view.getContext()).startSupportActionMode(actionModeCallbacks);
+                    ((AppCompatActivity) view.getContext()).startSupportActionMode(actionModeCallbacks);
                     selectItem(r);
                     return true;
                 }
@@ -145,13 +141,16 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(selRecepti.size() > 0)
+                    if (selRecepti.size() > 0)
                         selectItem(r);
-                    else{
-                        Toast.makeText(context, "ucitavanje recepta", Toast.LENGTH_SHORT).show();
+                    else {
                         Intent receptIntent = new Intent(context, ReceptActivity.class);
                         receptIntent.putExtra("Id", r.getId());
                         context.startActivity(receptIntent);
+                    }
+
+                    if(selRecepti.size() == 0){
+                        ((AppCompatActivity)context).startSupportActionMode(actionModeCallbacks).finish();
                     }
                 }
             });
@@ -171,6 +170,7 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
 
     }
 
+
     public void add(int position, Recept recept) {
         recepti.add(position, recept);
         notifyItemInserted(position);
@@ -183,6 +183,22 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
 
     public void setData(List<Recept> recepti) {
         this.recepti = recepti;
+    }
+
+    public void setSelectedData(long[] ids){
+        selRecepti.clear();
+
+        this.multiSelect = true;
+
+        ((AppCompatActivity)context).startSupportActionMode(actionModeCallbacks);
+
+        for(int i = 0; i < ids.length; ++i){
+            for(Recept r : recepti){
+                if(r.getId() == ids[i]){
+                    selRecepti.add(r);
+                }
+            }
+        }
     }
 
     public ReceptAdapter(List<Recept> recepti, Context context, RecyclerView recyclerView) {
@@ -215,7 +231,6 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
 
 
     public List<Recept> getSelectedItems(){
-
         return selRecepti;
     }
 
