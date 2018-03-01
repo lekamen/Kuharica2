@@ -106,10 +106,22 @@ public class MainActivity extends AppCompatActivity {
              r.setSastojci(Arrays.asList("300g brašna", "3 kašike šećera", "3 jaja"));
              r.setUpute(Arrays.asList("umiješati brašno sa šećerom", "zagrijati tavu 3 minute", "peći palačinke"));
 
+             Recept r2 = new Recept();
+             r2.setImeRecepta("princes krofne");
+             r2.setPhotoRecept(null);
+             r2.setNotes(null);
+             r2.setSastojci(Arrays.asList("3 bjeljanjka", "3 kašike šećera", "konzerva šlaga"));
+             r2.setUpute(Arrays.asList("its a kind of magic", "MAGIC", "MAGIC MAGIC"));
+
              kategorija.setRecepti(Arrays.asList(r));
+             kategorija.setRecepti(Arrays.asList(r2));
+
              r.setId(db.insertRecept(r));
+             r2.setId(db.insertRecept(r2));
+
              kategorija.setId(db.insertKategorija(kategorija));
              db.insertReceptUKategoriju(kategorija, r);
+             db.insertReceptUKategoriju(kategorija, r2);
 
              Kategorija kat = new Kategorija("slano", null);
              Recept r1 = new Recept();

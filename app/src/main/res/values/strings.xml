@@ -1,4 +1,20 @@
 <resources>
     <string name="app_name">Kuharica</string>
     <string name="action_settings">Settings</string>
+    <string name="alertDialogTitle1">Izaberite opciju</string>
+    <string name="alertDialogMessage1">Ažurirajte ili izbrišite recept?</string>
+    <string name="alertDialogPositive">Ažuriraj</string>
+    <string name="alertDialogNeutral">Izbriši</string>
+    <string name="alertDialogNegative">Odustani</string>
+    <string name="omog_split_view">Omogući split view</string>
+    <string name="searchCat">Pretražite kategoriju...</string>
+
+    <!---
+        IMENA VARIJABLI U SHARED PREFRENCES
+                    &
+            OSTALO BITNO ZA TO
+    !-->napravi
+    <string name="splitViewEnabled">splitViewEnabled</string>
+    <string name="mPrefs">hr.math.android.kuharica.mPrefrences</string>
+    <string name="abecedni_poredak">Abecedni poredak</string>
 </resources>

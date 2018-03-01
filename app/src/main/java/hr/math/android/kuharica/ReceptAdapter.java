@@ -1,9 +1,14 @@
 package hr.math.android.kuharica;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,6 +17,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,6 +26,8 @@ import java.util.List;
 
 public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder>{
     private List<Recept> recepti;
+    private List<SelectableRecept> selRecepti;
+
     private Context context;
     private RecyclerView recyclerView;
 
@@ -29,12 +37,13 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
 
         public View layout;
 
-        public ViewHolder(View v) {
+        public ViewHolder(View v){
             super(v);
             layout = v;
             image = (ImageView) v.findViewById(R.id.image);
             imeRecepta = (TextView) v.findViewById(R.id.name);
         }
+
     }
 
     public void add(int position, Recept recept) {
@@ -51,6 +60,12 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
         this.recepti = recepti;
         this.context = context;
         this.recyclerView = recyclerView;
+
+        selRecepti = new ArrayList<>();
+        for(Recept r : recepti){
+            this.selRecepti.add(new SelectableRecept(r, false));
+        }
+
         Log.w("kategorijaadapter", "velicina " + recepti.size());
     }
 
@@ -66,6 +81,8 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ReceptAdapter.ViewHolder holder, int position) {
         final Recept recept = recepti.get(position);
+        final SelectableRecept selRecept = selRecepti.get(position);
+
         holder.imeRecepta.setText(recept.getImeRecepta());
         //ako je photoKategorije null onda se uzima defaultni
         int vrijednost;
@@ -80,7 +97,40 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "ucitavanje recepta", Toast.LENGTH_SHORT).show();
+
+                //ako smo odabrali neke recepte
+                //s kratkim clickom ih opet biramo
+                if(getSelectedItemCount() > 0){
+                    if(!selRecept.isSelected()){
+                        selRecept.setSelected(true);
+                        view.findViewById(R.id.kartica).setBackgroundColor(Color.MAGENTA);
+                    }
+                    else{
+                        selRecept.setSelected(false);
+                        view.findViewById(R.id.kartica).setBackgroundColor(Color.WHITE);
+                    }
+                }
+                //pritisnuli smo samo jedan recept
+                else{
+                    Toast.makeText(context, "ucitavanje recepta", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        holder.layout.setOnLongClickListener(new View.OnLongClickListener(){
+            @Override
+            public boolean onLongClick(View view){
+                if(!selRecept.isSelected()){
+                    selRecept.setSelected(true);
+                    view.findViewById(R.id.kartica).setBackgroundColor(Color.MAGENTA);
+                }
+                else{
+                    selRecept.setSelected(false);
+                    view.findViewById(R.id.kartica).setBackgroundColor(Color.WHITE);
+                }
+
+                return true;
             }
         });
     }
@@ -89,4 +139,37 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
     public int getItemCount() {
         return recepti.size();
     }
+
+    public void toggleSelection(int position){
+        if(selRecepti.get(position).isSelected())
+            selRecepti.get(position).setSelected(false);
+        else
+            selRecepti.get(position).setSelected(true);
+
+        notifyItemChanged(position);
+    }
+
+    public void clearSelection(){
+        for(SelectableRecept r : selRecepti){
+            if(r.isSelected()) {
+                r.setSelected(false);
+                notifyItemChanged(selRecepti.indexOf(r));
+            }
+        }
+    }
+
+    public List<SelectableRecept> getSelectedItems(){
+        List<SelectableRecept> oznaceni = new ArrayList<>();
+        for(SelectableRecept r : selRecepti){
+            if(r.isSelected())
+                oznaceni.add(r);
+        }
+
+        return oznaceni;
+    }
+
+    public int getSelectedItemCount(){
+        return getSelectedItems().size();
+    }
+
 }
