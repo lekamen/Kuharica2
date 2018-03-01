@@ -1,11 +1,15 @@
 package hr.math.android.kuharica;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -25,6 +29,7 @@ import java.util.List;
 public class ReceptActivity extends AppCompatActivity {
 
     private int stari = 1;
+    private long ID=0;
     private Context ctx;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,18 +55,18 @@ public class ReceptActivity extends AppCompatActivity {
         collapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.colorAccent));
 
 
-        //String name = savedInstanceState.getString("recipeName");
-        String name = "test_ime";
+        ID = getIntent().getLongExtra("ID", 0);
 
-        collapsingToolbar.setTitle(name);
 
-        //long ID = savedInstanceState.getLong("recipeID");
-        long ID = 12345;
+
+
+        //long ID = 12345;
         DBRAdapter db = new DBRAdapter(this);
         db.open();
         Recept test_recept = new Recept();
         //test_recept.setId(ID);
-        test_recept.setImeRecepta(name);
+        //test_recept.setImeRecepta(name);
+        /*
         List<String> temp_list = new ArrayList<String>();
         temp_list.add("3 jaja");
         temp_list.add("100g šećera");
@@ -72,11 +77,17 @@ public class ReceptActivity extends AppCompatActivity {
         test_recept.setPhotoRecept("");
 
         ID = db.insertRecept(test_recept);
+        */
+
 
         Recept current = db.getReceptZaId(ID);
+
         final List<String> sastojci = current.getSastojci();
         List<String> upute = current.getUpute();
         String napomena = current.getNotes();
+        String name = current.getImeRecepta();
+
+        collapsingToolbar.setTitle(name);
 
         final ListView lv_sastojci = (ListView) findViewById(R.id.sastojci_list);
         ListView lv_upute = (ListView) findViewById(R.id.priprema_list);
@@ -135,6 +146,36 @@ public class ReceptActivity extends AppCompatActivity {
 
             }
         });
+        db.close();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.recept_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.uredi_recept:
+                Intent intent = new Intent(ctx, AddRecipeActivity.Class);
+                intent.putExtra("ID", ID);
+                ctx.startActivity(intent);
+
+                return true;
+            case R.id.obrisi_recept:
+                DBRAdapter db = new DBRAdapter(this);
+                db.open();
+                db.deleteRecept(ID);
+                db.close();
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {
