@@ -8,12 +8,6 @@
     <string name="alertDialogNegative">Odustani</string>
     <string name="omog_split_view">Omogući split view</string>
     <string name="searchCat">Pretražite kategoriju...</string>
-
-    <!---
-        IMENA VARIJABLI U SHARED PREFRENCES
-                    &
-            OSTALO BITNO ZA TO
-    !-->napravi
     <string name="splitViewEnabled">splitViewEnabled</string>
     <string name="mPrefs">hr.math.android.kuharica.mPrefrences</string>
     <string name="abecedni_poredak">Abecedni poredak</string>
@@ -25,4 +19,28 @@
     <string name="fileSastojciHeader">Sastojci</string>
     <string name="fileUputeHeader">Upute:</string>
     <string name="fileNapHeader">Napomene</string>
+    <string name="addRecipe_recipeName">Recipe name:</string>
+    <string name="addRecipe_recipeNameHint">Enter recipe name</string>
+    <string name="addRecipe_ingredientHint">Enter ingredient name</string>
+    <string name="addRecipe_ingredientBtnText">Add ingredient</string>
+    <string name="addRecipe_saveBtnText">Save recipe</string>
+    <string name="addRecipe_recipeDetailsHint">Enter recipe details</string>
+    <string name="addRecipe_recipeNotesHint">Enter recipe notes</string>
+    <string name="addRecipe_recipeStepHint">Enter next step</string>
+    <string name="addRecipe_stepBtnText">Add step</string>
+    <string name="addRecipe_pictureBtnText">Select picture</string>
+    <string name="addRecipe_peopleHint">Number of people</string>
+
+    <string-array name="broj_osoba">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </string-array>
 </resources>

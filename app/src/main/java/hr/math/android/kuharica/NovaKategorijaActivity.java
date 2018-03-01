@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -28,7 +29,7 @@ public class NovaKategorijaActivity extends AppCompatActivity {
     public static int counter = 0;
     Random rand = new Random();
     EditText imeKategorije;
-    String path;
+    String path = null;
     boolean imePostoji = false;
     Label label;
     Label statusSlike;
@@ -101,19 +102,13 @@ public class NovaKategorijaActivity extends AppCompatActivity {
         Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
         getIntent.setType("image/*");
 
-        //Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        //pickIntent.setType("image/*");
-
-        //Intent chooserIntent = Intent.createChooser(getIntent, "Select Image");
-        //chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
-
         startActivityForResult(getIntent, PICK_IMAGE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        Log.w("activityesult", "kad ja udjem ovdje");
         if(resultCode == Activity.RESULT_OK) {
             if(data == null) {
                 statusSlike.setText("Slika nije uspješno odabrana");
@@ -131,7 +126,9 @@ public class NovaKategorijaActivity extends AppCompatActivity {
 
                 Log.w("path: ", path);
             } catch (Exception e) {
-
+                path = null;
+                statusSlike.setText("Slika nije uspješno odabrana");
+                statusSlike.setVisibility(View.INVISIBLE);
             }
 
 
@@ -163,5 +160,37 @@ public class NovaKategorijaActivity extends AppCompatActivity {
             }
         }
         return mypath.getAbsolutePath();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+
+        if(imeKategorije.getText().toString() != null) {
+            bundle.putString("ime", imeKategorije.getText().toString());
+        }
+        Log.w("pathvanifa", "" + path);
+        if(path != null) {
+            Log.w("pathsaveinstancestate", "" + path);
+            bundle.putString("path", path);
+        }
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle bundle) {
+        super.onRestoreInstanceState(bundle);
+
+        String ime = bundle.getString("ime");
+        String staza = bundle.getString("path");
+        if(ime != null) {
+            imeKategorije.setText(ime);
+            Log.w("imeurestore", ime);
+        }
+
+        if(staza != null) {
+            statusSlike.setText("Slika uspješno odabrana");
+            statusSlike.setVisibility(View.VISIBLE);
+            Log.w("pathurestoreinstance", "" + staza);
+        }
     }
 }

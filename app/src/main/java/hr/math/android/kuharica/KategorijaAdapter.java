@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,13 +95,12 @@ public class KategorijaAdapter extends RecyclerView.Adapter<KategorijaAdapter.Vi
             }
         }
 
+        Log.w("adapter", "Jel u drawable " + uDrawableFolderu + kategorija.getPhotoKategorije());
         if(uDrawableFolderu) {
             Picasso.with(context).load(vrijednost)
                     .placeholder(R.drawable.default_kategorija).into(holder.image);
         } else {
             loadImageFromStorage(kategorija.getPhotoKategorije(), holder);
-            /*Picasso.with(context).load(kategorija.getPhotoKategorije())
-                    .placeholder(R.drawable.default_kategorija).into(holder.image);*/
         }
 
         holder.layout.setOnClickListener(new View.OnClickListener() {

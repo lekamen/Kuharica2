@@ -1,19 +1,19 @@
 package hr.math.android.kuharica;
 
-
- /* Created by Branimirko on 27/02/18.
+/**
+ * Created by Branimirko on 28/02/18.
  */
 
-public class Sastojak {
+public class Uputa {
     private boolean isSelected;
-    private String sastojak;
+    private String uputa;
 
-    public String getSastojak() {
-        return sastojak;
+    public String getUputa() {
+        return uputa;
     }
 
-    public void setSastojak(String sastojak) {
-        this.sastojak = sastojak;
+    public void setUputa(String uputa) {
+        this.uputa = uputa;
     }
 
     public boolean getSelected() {

@@ -1,12 +1,8 @@
 package hr.math.android.kuharica;
 
-import android.app.ListActivity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -14,21 +10,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView;
-import android.widget.CursorAdapter;
-import android.widget.GridView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
-
-import com.github.clans.fab.FloatingActionMenu;
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -121,12 +106,14 @@ public class MainActivity extends AppCompatActivity {
              kat.setId(db.insertKategorija(kat));
              db.insertReceptUKategoriju(kat, r1);
 
-             kat = new Kategorija("Bez kategorije", null);
-             db.insertKategorija(kat);
+             Kategorija kat1 = new Kategorija("Bez kategorije", String.valueOf(R.drawable.ic_close_black_24dp));
+             db.insertKategorija(kat1);
+         }
 
-        }
-
-        Log.w("broj osoba: " , db.getAllRecepti("").size() + " " + db.getAllRecepti("").get(0).getBrOsoba() +
+         for(Kategorija k : db.getAllKategorije()) {
+             Log.w("kategorije", "slika " + k.getPhotoKategorije());
+         }
+        Log.w("broj osoba: " , db.getAllRecepti("") + " " + db.getAllRecepti("").get(0).getBrOsoba() +
                 " "  + db.getAllRecepti("").get(1).getBrOsoba());
 
          Recept r = db.getAllRecepti("").get(0);
@@ -162,13 +149,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     private void openSearchActivity() {
         Intent intent = new Intent(this, SearchActivity.class);
         startActivity(intent);
     }
-
+  
     public void noviRecept(View view) {
-        Toast.makeText(this, "novi recept", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, AddRecipeActivity.class);
+        startActivity(intent);
     }
 
     public void novaKategorija(View view) {
@@ -184,4 +173,6 @@ public class MainActivity extends AppCompatActivity {
         db.close();
         kategorijaAdapter.notifyDataSetChanged();
     }
+
+
 }
