@@ -1,5 +1,6 @@
 package hr.math.android.kuharica;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -7,9 +8,11 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -21,8 +24,11 @@ import java.util.List;
 
 public class ReceptActivity extends AppCompatActivity {
 
+    private int stari = 1;
+    private Context ctx;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ctx = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recept);
 
@@ -47,9 +53,9 @@ public class ReceptActivity extends AppCompatActivity {
         //test_recept.setId(ID);
         test_recept.setImeRecepta(name);
         List<String> temp_list = new ArrayList<String>();
-        temp_list.add("prvi");
-        temp_list.add("drugi");
-        temp_list.add("treci");
+        temp_list.add("3 jaja");
+        temp_list.add("100g šećera");
+        temp_list.add("otprilike 4 grama soli");
         test_recept.setSastojci(temp_list);
         test_recept.setNotes("blabla blabla bla");
         test_recept.setUpute(Arrays.asList("korak 1 min","peci 3 minute", "korak 3: mijesi 2min"));
@@ -58,20 +64,20 @@ public class ReceptActivity extends AppCompatActivity {
         ID = db.insertRecept(test_recept);
 
         Recept current = db.getReceptZaId(ID);
-        List<String> sastojci = current.getSastojci();
+        final List<String> sastojci = current.getSastojci();
         List<String> upute = current.getUpute();
         String napomena = current.getNotes();
 
-        ListView lv_sastojci = (ListView) findViewById(R.id.sastojci_list);
+        final ListView lv_sastojci = (ListView) findViewById(R.id.sastojci_list);
         ListView lv_upute = (ListView) findViewById(R.id.priprema_list);
         TextView tv_napomene = (TextView) findViewById(R.id.napomene);
 
-        ArrayList<Sastojak> temp = new ArrayList<>();
+        final ArrayList<Sastojak> lista_sastojaka = new ArrayList<>();
         for (String s: sastojci) {
             Sastojak sas = new Sastojak();
-            sas.setSastojak(s);
+            sas.setSastojak(preracunaj(s,1,2));
             sas.setSelected(false);
-            temp.add(sas);
+            lista_sastojaka.add(sas);
         }
         ArrayList<Uputa> lista_uputa = new ArrayList<>();
         for(String u: upute) {
@@ -80,7 +86,7 @@ public class ReceptActivity extends AppCompatActivity {
             upu.setSelected(false);
             lista_uputa.add(upu);
         }
-        SastojciAdapter adapter_sastojci = new SastojciAdapter(this, temp);
+        final SastojciAdapter adapter_sastojci = new SastojciAdapter(this, lista_sastojaka);
         lv_sastojci.setAdapter(adapter_sastojci);
         setListViewHeightBasedOnChildren(lv_sastojci);
         UputaAdapter adapter_uputa = new UputaAdapter(this, lista_uputa);
@@ -88,6 +94,37 @@ public class ReceptActivity extends AppCompatActivity {
         setListViewHeightBasedOnChildren(lv_upute);
 
         tv_napomene.setText(napomena);
+
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> spinner_adapter = ArrayAdapter.createFromResource(this, R.array.broj_osoba, R.layout.support_simple_spinner_dropdown_item);
+        spinner_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinner_adapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                ArrayList<Sastojak> temp = new ArrayList<>();
+                for (Sastojak s:lista_sastojaka)
+                {
+                    Sastojak sas = new Sastojak();
+                    sas.setSastojak(preracunaj(s.getSastojak(),stari,i+1));
+                    sas.setSelected(false);
+                    temp.add(sas);
+                }
+
+                lista_sastojaka.clear();
+                for(Sastojak s:temp)
+                    lista_sastojaka.add(s);
+                stari = i+1;
+                adapter_sastojci.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {
@@ -108,6 +145,33 @@ public class ReceptActivity extends AppCompatActivity {
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
         listView.requestLayout();
+    }
+
+    private String preracunaj(String ulaz, int stari, int novi)
+    {
+        String b = ulaz.replaceAll("[^0-9]","");
+        String izlaz = "";
+        int pocetak=0, kraj=0;
+        Double temp =0.0;
+        try {
+            temp = Double.parseDouble(b.replace(",","."));
+        }
+        catch (NumberFormatException e)
+        {
+
+        }
+        if(temp!=0.0) {
+            kraj = ulaz.indexOf(b);
+            izlaz += ulaz.substring(pocetak, kraj);
+            temp= temp / stari * novi;
+            if(temp%1==0)
+                izlaz+=temp.intValue();
+            else
+                izlaz += temp;
+            pocetak = kraj + b.length();
+            }
+        izlaz+=ulaz.substring(pocetak,ulaz.length());
+        return izlaz;
     }
 
 }
