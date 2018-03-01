@@ -6,7 +6,7 @@ import java.util.List;
  * Created by mabel on 27-Feb-18.
  */
 
-public class Recept {
+public class Recept implements  Comparable<Recept>{
 
     private long id;
     private String imeRecepta;
@@ -94,5 +94,15 @@ public class Recept {
     @Override
     public int hashCode() {
         return (id + imeRecepta).hashCode();
+    }
+
+    @Override
+    public int compareTo(Recept r){
+        if(this.imeRecepta.compareTo(r.getImeRecepta()) < 0 )
+            return -1;
+        else if (this.imeRecepta.compareTo(r.getImeRecepta()) == 0)
+            return 0;
+        else
+            return 1;
     }
 }
