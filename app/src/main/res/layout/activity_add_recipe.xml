@@ -77,6 +77,15 @@
                 android:layout_below="@+id/EditText_step"
                 android:hint="@string/addRecipe_recipeNotesHint"/>
 
+            <EditText
+                android:id="@+id/EditText_people"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/recipeNotes"
+                android:inputType="number"
+                android:hint="@string/addRecipe_peopleHint"
+                android:text="1"/>
+
         </RelativeLayout>
 
     </ScrollView>

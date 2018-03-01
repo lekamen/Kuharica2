@@ -1,12 +1,16 @@
 package hr.math.android.kuharica;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.renderscript.Script;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,8 +29,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class AddRecipeActivity extends AppCompatActivity {
 
@@ -41,8 +47,11 @@ public class AddRecipeActivity extends AppCompatActivity {
     String tempStep;
     String recipeNotesText;
     String userChoosenTask;
+    int peopleText;
     ImageView ivImage;
     Boolean flag;
+    Uri imageURI;
+    String currentImagePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +72,8 @@ public class AddRecipeActivity extends AppCompatActivity {
             editTextName.setText(recept.getImeRecepta());
             EditText editTextNotes = (EditText) findViewById(R.id.recipeNotes);
             editTextName.setText(recept.getNotes());
+            EditText editTextPeople = (EditText) findViewById(R.id.EditText_people);
+            editTextPeople.setText(Integer.toString(Recept.getBrOsoba()));
 
             ingredientList = new ArrayList<String>();
             ingredientList.addAll(recept.getSastojci());
@@ -113,6 +124,10 @@ public class AddRecipeActivity extends AppCompatActivity {
         recipeNotesText = editTextNotes.getText().toString();
         savedInstanceState.putString("recipeNotesText", recipeNotesText);
 
+        EditText editTextPeople = (EditText)findViewById(R.id.EditText_people);
+        peopleText = Integer.parseInt(editTextPeople.getText().toString());
+        savedInstanceState.putInt("peopleText", peopleText);
+
         savedInstanceState.putStringArrayList("ingredientList", ingredientList);
         savedInstanceState.putStringArrayList("stepList", stepList);
     }
@@ -126,6 +141,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         ingredientList = savedInstanceState.getStringArrayList("ingredientList");
         tempStep = savedInstanceState.getString("tempStep");
         recipeNotesText = savedInstanceState.getString("recipeNotesText");
+        peopleText = savedInstanceState.getInt("peopleText");
 
         EditText editTextName = (EditText)findViewById(R.id.EditText_recipeName);
         if(!recipeName.isEmpty()) editTextName.setText(recipeName);
@@ -150,6 +166,12 @@ public class AddRecipeActivity extends AppCompatActivity {
         else {
             editTextNotes.setText("");
             editTextNotes.setHint(R.string.addRecipe_recipeNotesHint);
+        }
+        EditText editTextPeople = (EditText)findViewById(R.id.EditText_people);
+        if(peopleText < 1) editTextPeople.setText(peopleText);
+        else {
+            editTextPeople.setText("1");
+            editTextPeople.setHint(R.string.addRecipe_peopleHint);
         }
 
         adapterIngredients = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ingredientList);
@@ -220,8 +242,11 @@ public class AddRecipeActivity extends AppCompatActivity {
             EditText editTextNotes = (EditText)findViewById(R.id.recipeNotes);
             recipeNotesText = editTextNotes.getText().toString();
 
-            if(recipeName.isEmpty() || stepList.isEmpty() || recipeNotesText.isEmpty() || ingredientList.isEmpty()){
-                Toast.makeText(this, "Form is not filled properply.", Toast.LENGTH_LONG).show();
+            EditText editTextPeople = (EditText)findViewById(R.id.EditText_people);
+            peopleText = Integer.parseInt(editTextPeople.getText().toString());
+
+            if(recipeName.isEmpty() || stepList.isEmpty() || recipeNotesText.isEmpty() || ingredientList.isEmpty() || peopleText < 1 || peopleText > 10){
+                Toast.makeText(this, "Form is not filled properply. Check if the number of people is set between 1 and 10.", Toast.LENGTH_LONG).show();
                 return;
             }
 
@@ -230,7 +255,9 @@ public class AddRecipeActivity extends AppCompatActivity {
             recept.setNotes(recipeNotesText);
             recept.setUpute(stepList);
             recept.setSastojci(ingredientList);
-            recept.setPhotoRecept(null);
+            recept.setBrOsoba(peopleText);
+            if(!currentImagePath.isEmpty()) recept.setPhotoRecept(currentImagePath);
+            else recept.setPhotoRecept(null);
 
             DBRAdapter db = new DBRAdapter(this);
             db.open();
@@ -248,8 +275,8 @@ public class AddRecipeActivity extends AppCompatActivity {
             EditText editTextNotes = (EditText)findViewById(R.id.recipeNotes);
             recipeNotesText = editTextNotes.getText().toString();
 
-            if(recipeName.isEmpty() || stepList.isEmpty() || recipeNotesText.isEmpty() || ingredientList.isEmpty()){
-                Toast.makeText(this, "Form is not filled properply.", Toast.LENGTH_LONG).show();
+            if(recipeName.isEmpty() || stepList.isEmpty() || recipeNotesText.isEmpty() || ingredientList.isEmpty() || peopleText < 1 || peopleText > 10){
+                Toast.makeText(this, "Form is not filled properply. Check if the number of people is set between 1 and 10.", Toast.LENGTH_LONG).show();
                 return;
             }
 
@@ -258,11 +285,13 @@ public class AddRecipeActivity extends AppCompatActivity {
             recept.setNotes(recipeNotesText);
             recept.setUpute(stepList);
             recept.setSastojci(ingredientList);
-            recept.setPhotoRecept(null);
+            recept.setBrOsoba(peopleText);
+            if(!currentImagePath.isEmpty()) recept.setPhotoRecept(currentImagePath);
+            else recept.setPhotoRecept(null);
 
             DBRAdapter db = new DBRAdapter(this);
             db.open();
-            //db.updateRecept(Recept);
+            db.updateRecept(Recept);
             db.close();
         }
     }
@@ -339,6 +368,11 @@ public class AddRecipeActivity extends AppCompatActivity {
         if (data != null) {
             try {
                 bm = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
+                imageURI = data.getData();
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageURI);
+                Random r = new Random();
+                int name = r.nextInt(3000 - 1000) + 3000;
+                currentImagePath = saveToInternalStorage(bitmap, Integer.toString(name));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -358,11 +392,40 @@ public class AddRecipeActivity extends AppCompatActivity {
             fo = new FileOutputStream(destination);
             fo.write(bytes.toByteArray());
             fo.close();
+            imageURI = data.getData();
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageURI);
+            Random r = new Random();
+            int name = r.nextInt(3000 - 1000) + 3000;
+            currentImagePath = saveToInternalStorage(bitmap, Integer.toString(name));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
         ivImage.setImageBitmap(thumbnail);
+    }
+
+    private String saveToInternalStorage(Bitmap bitmapImage, String name){
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        // path to /data/data/yourapp/app_data/imageDir
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        // Create imageDir
+        File mypath=new File(directory,name + ".jpg");
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mypath);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return mypath.getAbsolutePath();
     }
 }
