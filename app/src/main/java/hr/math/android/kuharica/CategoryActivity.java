@@ -84,7 +84,7 @@ public class CategoryActivity extends AppCompatActivity {
         super.onResume();
         db.open();
         List<Recept> recepti = db.getAllReceptiFromKategorija(mcategory.getId());
-        adapter.setData();
+        adapter.setData(db.getAllReceptiFromKategorija(mcategory.getId()));
         db.close();
 
         for(Recept r : recepti){
