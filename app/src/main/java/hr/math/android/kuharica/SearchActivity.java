@@ -17,6 +17,7 @@ import java.util.Set;
 public class SearchActivity extends AppCompatActivity {
 
     private RecyclerView searchCategory;
+
     private RecyclerView searchRecepts;
 
     private RecyclerView.LayoutManager layoutManagerKategorija;
@@ -33,6 +34,7 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
 
         Intent intent = getIntent();
         if(intent.getExtras() == null){
@@ -68,6 +70,7 @@ public class SearchActivity extends AppCompatActivity {
 
     public void pretraziKuharicu(View view) {
         String pretraga = ((EditText)findViewById(R.id.searchText)).getText().toString();
+
         if(pretragaKategorije == false)
             pretraziKategorije(pretraga);
         pretraziRecepte(pretraga);
@@ -80,6 +83,7 @@ public class SearchActivity extends AppCompatActivity {
         searchCategory.setAdapter(kategorijaAdapter);
         db.close();
     }
+
 
     private void pretraziRecepte(String pretraga) {
         db = new DBRAdapter(this);

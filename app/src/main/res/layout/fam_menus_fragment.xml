@@ -21,6 +21,7 @@
         fab:menu_labels_showAnimation="@anim/jump_from_down"
         fab:menu_labels_hideAnimation="@anim/jump_to_down"
         fab:menu_animationDelayPerItem="0"
+
         fab:menu_colorNormal="#FFB805"
         fab:menu_colorPressed="#F2AB00"
         fab:menu_colorRipple="#D99200">
@@ -31,6 +32,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_add_black_24dp"
             fab:fab_label="Nova kategorija"
+
             style="@style/MenuButtonsStyle"
             android:onClick="novaKategorija"/>
 
@@ -43,6 +45,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginRight="8dp"
             android:src="@drawable/ic_add_black_24dp"
+
             android:onClick="noviRecept"
             />
 

@@ -111,8 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
              kat = new Kategorija("Bez kategorije", null);
              db.insertKategorija(kat);
-
-        }
+         }
 
         Log.w("broj osoba: " , db.getAllRecepti("").size() + " " + db.getAllRecepti("").get(0).getBrOsoba() +
                 " "  + db.getAllRecepti("").get(1).getBrOsoba());
@@ -150,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     private void openSearchActivity() {
         Intent intent = new Intent(this, SearchActivity.class);
         startActivity(intent);
@@ -172,4 +172,5 @@ public class MainActivity extends AppCompatActivity {
         db.close();
         kategorijaAdapter.notifyDataSetChanged();
     }
+
 }

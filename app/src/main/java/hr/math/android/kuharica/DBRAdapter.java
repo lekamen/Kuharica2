@@ -323,7 +323,7 @@ public class DBRAdapter {
     public List<Recept> getAllReceptiFromKategorija(long idKategorije) throws SQLException {
 
         Cursor c = db.query(DATABASE_RECEPT_U_KATEGORIJI, new String[]{ID_RECEPTA},
-                       ID_KATEGORIJE + "=" + idKategorije, null, null, null, null);
+                ID_KATEGORIJE + "=" + idKategorije, null, null, null, null);
 
         List<Recept> recepti = new ArrayList<>();
         if(c.moveToFirst()) {
@@ -337,7 +337,7 @@ public class DBRAdapter {
 
     //za zadani string provjeri sadržava li ime recepta taj string
     //public Cursor getAllReceptiKaoTekst(String tekst) throws SQLException {
-     //   return db.query(DATABASE_RECEPT, new String[] {IME_RECEPTA, PHOTO_RECEPT, NOTES},
+    //   return db.query(DATABASE_RECEPT, new String[] {IME_RECEPTA, PHOTO_RECEPT, NOTES},
     //            IME_RECEPTA + " LIKE " + tekst, null, null, null, null, null);
     //}
 
