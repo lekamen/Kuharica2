@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SearchActivity.class);
         startActivity(intent);
     }
-
+  
     public void noviRecept(View view) {
         Toast.makeText(this, "novi recept", Toast.LENGTH_SHORT).show();
     }
@@ -175,5 +175,6 @@ public class MainActivity extends AppCompatActivity {
         db.close();
         kategorijaAdapter.notifyDataSetChanged();
     }
+
 
 }
