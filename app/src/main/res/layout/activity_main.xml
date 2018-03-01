@@ -43,6 +43,8 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/fam_menus_fragment"
         app:elevation="0dp"
+        android:background="@android:color/transparent"
+
         />
 
     <Button

@@ -14,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
+
 
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -86,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
              r.setImeRecepta("palačinke");
              r.setPhotoRecept(String.valueOf(R.drawable.pancakes));
              r.setNotes(null);
+             r.setBrOsoba(4);
              r.setSastojci(Arrays.asList("300g brašna", "3 kašike šećera", "3 jaja"));
              r.setUpute(Arrays.asList("umiješati brašno sa šećerom", "zagrijati tavu 3 minute", "peći palačinke"));
 
@@ -105,8 +108,19 @@ public class MainActivity extends AppCompatActivity {
              r1.setId(db.insertRecept(r1));
              kat.setId(db.insertKategorija(kat));
              db.insertReceptUKategoriju(kat, r1);
-        }
 
+             kat = new Kategorija("Bez kategorije", null);
+             db.insertKategorija(kat);
+         }
+
+        Log.w("broj osoba: " , db.getAllRecepti("").size() + " " + db.getAllRecepti("").get(0).getBrOsoba() +
+                " "  + db.getAllRecepti("").get(1).getBrOsoba());
+
+         Recept r = db.getAllRecepti("").get(0);
+         Log.w("recept", r.getSastojci().toString());
+         r.setSastojci(Arrays.asList("probaaaa", "2"));
+         db.updateRecept(r);
+         Log.w("recept", r.getSastojci().toString());
         kategorijaAdapter = new KategorijaAdapter(db.getAllKategorije(), this, recyclerView);
         recyclerView.setAdapter(kategorijaAdapter);
         db.close();
@@ -135,14 +149,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     private void openSearchActivity() {
         Intent intent = new Intent(this, SearchActivity.class);
         startActivity(intent);
     }
+  
+    public void noviRecept(View view) {
+        Toast.makeText(this, "novi recept", Toast.LENGTH_SHORT).show();
+    }
 
-    public void testBtnClick(View view){
-        Intent intent = new Intent(this,AddRecipeActivity.class);
+    public void novaKategorija(View view) {
+        Intent intent = new Intent(this, NovaKategorijaActivity.class);
         startActivity(intent);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        db.open();
+        kategorijaAdapter.setData(db.getAllKategorije());
+        db.close();
+        kategorijaAdapter.notifyDataSetChanged();
+    }
+
 
 }
