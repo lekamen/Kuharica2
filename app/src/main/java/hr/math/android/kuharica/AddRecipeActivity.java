@@ -73,7 +73,7 @@ public class AddRecipeActivity extends AppCompatActivity {
             EditText editTextNotes = (EditText) findViewById(R.id.recipeNotes);
             editTextName.setText(recept.getNotes());
             EditText editTextPeople = (EditText) findViewById(R.id.EditText_people);
-            editTextPeople.setText(Integer.toString(Recept.getBrOsoba()));
+            editTextPeople.setText(Integer.toString(recept.getBrOsoba()));
 
             ingredientList = new ArrayList<String>();
             ingredientList.addAll(recept.getSastojci());
@@ -291,7 +291,7 @@ public class AddRecipeActivity extends AppCompatActivity {
 
             DBRAdapter db = new DBRAdapter(this);
             db.open();
-            db.updateRecept(Recept);
+            db.updateRecept(recept);
             db.close();
         }
     }
