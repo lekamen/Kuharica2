@@ -51,7 +51,10 @@ public class CategoryActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
+
         setTitle(mcategory.getImeKategorije());
+
+
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(navigationItemSelectedListener);
@@ -79,6 +82,15 @@ public class CategoryActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        db.open();
+        List<Recept> recepti = db.getAllReceptiFromKategorija(mcategory.getId());
+        adapter.setData();
+        db.close();
+
+        for(Recept r : recepti){
+            Toast.makeText(this, r.getId() + r.getImeRecepta(), Toast.LENGTH_SHORT).show();
+        }
+
         adapter.notifyDataSetChanged();
     }
 

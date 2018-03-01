@@ -62,6 +62,7 @@ public class KategorijaAdapter extends RecyclerView.Adapter<KategorijaAdapter.Vi
     public void setData(List<Kategorija> kategorije) {
         this.kategorije = kategorije;
     }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());

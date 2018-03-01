@@ -1,13 +1,17 @@
 package hr.math.android.kuharica;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,14 +30,77 @@ import java.util.List;
 
 public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder>{
     private List<Recept> recepti;
-    private List<SelectableRecept> selRecepti;
-
+    private List<Recept> selRecepti;
+    private boolean multiSelect = false;
     private Context context;
     private RecyclerView recyclerView;
+    private DBRAdapter db;
+
+    private ActionMode.Callback actionModeCallbacks = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            multiSelect = true;
+
+            menu.add(0, 4, 0, String.valueOf(getSelectedItemCount()));
+            menu.add(0,0,0,"Izbriši");
+            menu.add(0,1,0,"Spremi");
+            menu.add(0,2,0,"Odaberi sve");
+            menu.add(0,3,0,"Poništi");
+
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch(item.getItemId()){
+                case 0:
+                    db.open();
+                    for(Recept r : selRecepti){
+                        db.deleteRecept(r.getId());
+                        recepti.remove(r);
+                    }
+                    db.close();
+                    selRecepti.clear();
+                    notifyDataSetChanged();
+                    mode.finish();
+                    return true;
+                case 1:
+                    Toast.makeText(context, "Spremi", Toast.LENGTH_SHORT ).show();
+                    mode.finish();
+                    return true;
+                case 2:
+                    for(Recept r : recepti){
+                        if(!selRecepti.contains(r))
+                            selRecepti.add(r);
+                    }
+                    notifyDataSetChanged();
+                    return true;
+                case 3:
+                    mode.finish();
+                    onDestroyActionMode(mode);
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            multiSelect = false;
+            selRecepti.clear();
+            notifyDataSetChanged();
+        }
+    };
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView image;
         public TextView imeRecepta;
+        public CardView cardView;
 
         public View layout;
 
@@ -42,6 +109,64 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
             layout = v;
             image = (ImageView) v.findViewById(R.id.image);
             imeRecepta = (TextView) v.findViewById(R.id.name);
+            cardView = (CardView)v.findViewById(R.id.kartica);
+        }
+
+        void update(final Recept r){
+
+            imeRecepta.setText(r.getImeRecepta());
+            //ako je photoKategorije null onda se uzima defaultni
+            int vrijednost = 1;
+            if(r.getPhotoRecept() == null) {
+                vrijednost = R.drawable.default_recept;
+            } else {
+                vrijednost = Integer.parseInt(r.getPhotoRecept());
+            }
+            Picasso.with(context).load(vrijednost)
+                    .placeholder(R.drawable.default_recept).into(image);
+
+            if(selRecepti != null){
+                if(selRecepti.contains(r)){
+                    cardView.setBackgroundColor(Color.LTGRAY);
+                } else{
+                    cardView.setBackgroundColor(Color.WHITE);
+                }
+            }
+
+            cardView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    ((AppCompatActivity)view.getContext()).startSupportActionMode(actionModeCallbacks);
+                    selectItem(r);
+                    return true;
+                }
+            });
+
+            cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(selRecepti.size() > 0)
+                        selectItem(r);
+                    else{
+                        Toast.makeText(context, "ucitavanje recepta", Toast.LENGTH_SHORT).show();
+                        Intent receptIntent = new Intent(context, ReceptActivity.class);
+                        receptIntent.putExtra("Id", r.getId());
+                        context.startActivity(receptIntent);
+                    }
+                }
+            });
+        }
+
+        void selectItem(Recept recept) {
+            if (multiSelect) {
+                if (selRecepti.contains(recept)) {
+                    selRecepti.remove(recept);
+                    cardView.setBackgroundColor(Color.WHITE);
+                } else {
+                    selRecepti.add(recept);
+                    cardView.setBackgroundColor(Color.LTGRAY);
+                }
+            }
         }
 
     }
@@ -56,17 +181,17 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
         notifyItemRemoved(position);
     }
 
+    public void setData(List<Recept> recepti) {
+        this.recepti = recepti;
+    }
+
     public ReceptAdapter(List<Recept> recepti, Context context, RecyclerView recyclerView) {
         this.recepti = recepti;
         this.context = context;
         this.recyclerView = recyclerView;
 
         selRecepti = new ArrayList<>();
-        for(Recept r : recepti){
-            this.selRecepti.add(new SelectableRecept(r, false));
-        }
-
-        Log.w("kategorijaadapter", "velicina " + recepti.size());
+        db = new DBRAdapter(context);
     }
 
     @Override
@@ -80,63 +205,7 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(ReceptAdapter.ViewHolder holder, int position) {
-        final Recept recept = recepti.get(position);
-        final SelectableRecept selRecept = selRecepti.get(position);
-
-        holder.imeRecepta.setText(recept.getImeRecepta());
-        //ako je photoKategorije null onda se uzima defaultni
-        int vrijednost;
-        if(recept.getPhotoRecept() == null) {
-            vrijednost = R.drawable.default_recept;
-        } else {
-            vrijednost = Integer.parseInt(recept.getPhotoRecept());
-        }
-        Picasso.with(context).load(vrijednost)
-                .placeholder(R.drawable.default_recept).into(holder.image);
-
-        if(getSelectedItemCount() > 0){
-            holder.layout.findViewById(R.id.kartica).setBackgroundColor(Color.MAGENTA);
-        }
-
-        holder.layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                //ako smo odabrali neke recepte
-                //s kratkim clickom ih opet biramo
-                if(getSelectedItemCount() > 0){
-                    if(!selRecept.isSelected()){
-                        selRecept.setSelected(true);
-                        view.findViewById(R.id.kartica).setBackgroundColor(Color.MAGENTA);
-                    }
-                    else{
-                        selRecept.setSelected(false);
-                        view.findViewById(R.id.kartica).setBackgroundColor(Color.WHITE);
-                    }
-                }
-                //pritisnuli smo samo jedan recept
-                else{
-                    Toast.makeText(context, "ucitavanje recepta", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
-        holder.layout.setOnLongClickListener(new View.OnLongClickListener(){
-            @Override
-            public boolean onLongClick(View view){
-                if(!selRecept.isSelected()){
-                    selRecept.setSelected(true);
-                    view.findViewById(R.id.kartica).setBackgroundColor(Color.MAGENTA);
-                }
-                else{
-                    selRecept.setSelected(false);
-                    view.findViewById(R.id.kartica).setBackgroundColor(Color.WHITE);
-                }
-
-                return true;
-            }
-        });
+        holder.update(recepti.get(position));
     }
 
     @Override
@@ -144,32 +213,10 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
         return recepti.size();
     }
 
-    public void toggleSelection(int position){
-        if(selRecepti.get(position).isSelected())
-            selRecepti.get(position).setSelected(false);
-        else
-            selRecepti.get(position).setSelected(true);
-
-        notifyItemChanged(position);
-    }
-
-    public void clearSelection(){
-        for(SelectableRecept r : selRecepti){
-            if(r.isSelected()) {
-                r.setSelected(false);
-                notifyItemChanged(selRecepti.indexOf(r));
-            }
-        }
-    }
 
     public List<Recept> getSelectedItems(){
-        List<Recept> oznaceni = new ArrayList<>();
-        for(SelectableRecept r : selRecepti){
-            if(r.isSelected())
-                oznaceni.add(r);
-        }
 
-        return oznaceni;
+        return selRecepti;
     }
 
     public int getSelectedItemCount(){
