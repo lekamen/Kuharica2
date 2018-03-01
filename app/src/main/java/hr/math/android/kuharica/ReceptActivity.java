@@ -107,6 +107,10 @@ public class ReceptActivity extends AppCompatActivity {
             {
                 e.printStackTrace();
             }
+        else
+        {
+            toolbar.setBackground(getResources().getDrawable(R.drawable.cake));
+        }
 
         collapsingToolbar.setTitle(name);
 
