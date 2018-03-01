@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AddRecipeActivity extends AppCompatActivity {
 
@@ -41,22 +42,55 @@ public class AddRecipeActivity extends AppCompatActivity {
     String recipeNotesText;
     String userChoosenTask;
     ImageView ivImage;
+    Boolean flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_recipe);
 
-        ingredientList = new ArrayList<String>();
-        adapterIngredients = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ingredientList);
-        ingredientView = (ListView)findViewById(R.id.ingredientsListView);
-        ingredientView.setAdapter(adapterIngredients);
+        Intent intent = getIntent();
+        Long Id = intent.getLongExtra("ID", -1);
 
-        stepList = new ArrayList<String>();
-        adapterSteps = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stepList);
-        stepView = (ListView)findViewById(R.id.stepsListView);
-        stepView.setAdapter(adapterSteps);
-        ivImage = (ImageView)findViewById(R.id.recipeImage);
+        if(Id != -1){
+            flag = true;
+            DBRAdapter db = new DBRAdapter(this);
+            db.open();
+            Recept recept = db.getReceptZaId(Id);
+            db.close();
+
+            EditText editTextName = (EditText) findViewById(R.id.EditText_recipeName);
+            editTextName.setText(recept.getImeRecepta());
+            EditText editTextNotes = (EditText) findViewById(R.id.recipeNotes);
+            editTextName.setText(recept.getNotes());
+
+            ingredientList = new ArrayList<String>();
+            ingredientList.addAll(recept.getSastojci());
+
+            stepList = new ArrayList<String>();
+            stepList.addAll(recept.getUpute());
+
+            adapterIngredients = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ingredientList);
+            ingredientView = (ListView)findViewById(R.id.ingredientsListView);
+            ingredientView.setAdapter(adapterIngredients);
+            adapterSteps = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stepList);
+            stepView = (ListView)findViewById(R.id.stepsListView);
+            stepView.setAdapter(adapterSteps);
+
+            //jos sliku treba
+        } else {
+            flag = false;
+            ingredientList = new ArrayList<String>();
+            adapterIngredients = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ingredientList);
+            ingredientView = (ListView)findViewById(R.id.ingredientsListView);
+            ingredientView.setAdapter(adapterIngredients);
+
+            stepList = new ArrayList<String>();
+            adapterSteps = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stepList);
+            stepView = (ListView)findViewById(R.id.stepsListView);
+            stepView.setAdapter(adapterSteps);
+            ivImage = (ImageView)findViewById(R.id.recipeImage);
+        }
     }
 
     @Override
@@ -179,33 +213,58 @@ public class AddRecipeActivity extends AppCompatActivity {
 
 
     public void saveBtnClick(View view){
-        EditText editTextName = (EditText)findViewById(R.id.EditText_recipeName);
-        recipeName = editTextName.getText().toString();
+        if(!flag){
+            EditText editTextName = (EditText)findViewById(R.id.EditText_recipeName);
+            recipeName = editTextName.getText().toString();
 
-        EditText editTextNotes = (EditText)findViewById(R.id.recipeNotes);
-        recipeNotesText = editTextNotes.getText().toString();
+            EditText editTextNotes = (EditText)findViewById(R.id.recipeNotes);
+            recipeNotesText = editTextNotes.getText().toString();
 
-        if(recipeName.isEmpty() || stepList.isEmpty() || recipeNotesText.isEmpty() || ingredientList.isEmpty()){
-            Toast.makeText(this, "Form is not filled properply.", Toast.LENGTH_LONG).show();
-            return;
+            if(recipeName.isEmpty() || stepList.isEmpty() || recipeNotesText.isEmpty() || ingredientList.isEmpty()){
+                Toast.makeText(this, "Form is not filled properply.", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            Recept recept = new Recept();
+            recept.setImeRecepta(recipeName);
+            recept.setNotes(recipeNotesText);
+            recept.setUpute(stepList);
+            recept.setSastojci(ingredientList);
+            recept.setPhotoRecept(null);
+
+            DBRAdapter db = new DBRAdapter(this);
+            db.open();
+            recept.setId(db.insertRecept(recept));
+
+            Recept receptIzBaze = db.getReceptZaId(recept.getId());
+            Log.w("MojaKlasa:", receptIzBaze.getImeRecepta());
+            Log.w("MojaKlasa:", receptIzBaze.getNotes());
+
+            db.close();
+        } else {
+            EditText editTextName = (EditText)findViewById(R.id.EditText_recipeName);
+            recipeName = editTextName.getText().toString();
+
+            EditText editTextNotes = (EditText)findViewById(R.id.recipeNotes);
+            recipeNotesText = editTextNotes.getText().toString();
+
+            if(recipeName.isEmpty() || stepList.isEmpty() || recipeNotesText.isEmpty() || ingredientList.isEmpty()){
+                Toast.makeText(this, "Form is not filled properply.", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            Recept recept = new Recept();
+            recept.setImeRecepta(recipeName);
+            recept.setNotes(recipeNotesText);
+            recept.setUpute(stepList);
+            recept.setSastojci(ingredientList);
+            recept.setPhotoRecept(null);
+
+            DBRAdapter db = new DBRAdapter(this);
+            db.open();
+            //db.updateRecept(Recept);
+            db.close();
         }
-
-        Recept recept = new Recept();
-        recept.setImeRecepta(recipeName);
-        recept.setNotes(recipeNotesText);
-        recept.setUpute(stepList);
-        recept.setSastojci(ingredientList);
-        recept.setPhotoRecept(null);
-
-        DBRAdapter db = new DBRAdapter(this);
-        db.open();
-        recept.setId(db.insertRecept(recept));
-
-        Recept receptIzBaze = db.getReceptZaId(recept.getId());
-        Log.w("MojaKlasa:", receptIzBaze.getImeRecepta());
-        Log.w("MojaKlasa:", receptIzBaze.getNotes());
-
-        db.close();
     }
 
     public void selectImage(View view) {
