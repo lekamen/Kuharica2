@@ -12,7 +12,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CategoryActivity extends AppCompatActivity {
@@ -22,8 +25,6 @@ public class CategoryActivity extends AppCompatActivity {
     private ReceptAdapter adapter;
     private DBRAdapter db;
     private Kategorija mcategory;
-    private List<SelectableRecept> odabraniRecepti;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +67,6 @@ public class CategoryActivity extends AppCompatActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        odabraniRecepti = adapter.getSelectedItems();
         // Checks the orientation of the screen
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
@@ -99,6 +99,10 @@ public class CategoryActivity extends AppCompatActivity {
                 break;
             case R.id.search:
                 openSearchActivity();
+                break;
+            case R.id.sort_AZ:
+                sortAlphabetically();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -124,5 +128,16 @@ public class CategoryActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SearchActivity.class);
         intent.putExtra("categoryId", mcategory.getId());
         startActivity(intent);
+    }
+
+    private void sortAlphabetically(){
+        db.open();
+        List<Recept> recepti = db.getAllReceptiFromKategorija(mcategory.getId());
+        db.close();
+
+        Collections.sort(recepti);
+
+        adapter = new ReceptAdapter(recepti, this, mRecyclerView);
+        mRecyclerView.setAdapter(adapter);
     }
 }

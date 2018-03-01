@@ -94,6 +94,10 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
         Picasso.with(context).load(vrijednost)
                 .placeholder(R.drawable.default_recept).into(holder.image);
 
+        if(getSelectedItemCount() > 0){
+            holder.layout.findViewById(R.id.kartica).setBackgroundColor(Color.MAGENTA);
+        }
+
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -158,8 +162,8 @@ public class ReceptAdapter extends RecyclerView.Adapter<ReceptAdapter.ViewHolder
         }
     }
 
-    public List<SelectableRecept> getSelectedItems(){
-        List<SelectableRecept> oznaceni = new ArrayList<>();
+    public List<Recept> getSelectedItems(){
+        List<Recept> oznaceni = new ArrayList<>();
         for(SelectableRecept r : selRecepti){
             if(r.isSelected())
                 oznaceni.add(r);
