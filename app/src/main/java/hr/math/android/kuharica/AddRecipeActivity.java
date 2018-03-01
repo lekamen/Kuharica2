@@ -245,7 +245,17 @@ public class AddRecipeActivity extends AppCompatActivity {
             EditText editTextPeople = (EditText)findViewById(R.id.EditText_people);
             peopleText = Integer.parseInt(editTextPeople.getText().toString());
 
-            if(recipeName.isEmpty() || stepList.isEmpty() || recipeNotesText.isEmpty() || ingredientList.isEmpty() || peopleText < 1 || peopleText > 10){
+            if(recipeName.isEmpty()) {
+                Toast.makeText(this, "Obavezno je popuniti ime recepta", Toast.LENGTH_LONG).show();
+            }
+
+            if(ingredientList.isEmpty()) {
+                Toast.makeText(this, "Obavezno je staviti barem 1 sastojak", Toast.LENGTH_LONG).show();
+            }
+            if(stepList.isEmpty()) {
+                Toast.makeText(this, "Obavezno je imati bar jednu uputu", Toast.LENGTH_LONG).show();
+            }
+            if( peopleText < 1 || peopleText > 10){
                 Toast.makeText(this, "Form is not filled properply. Check if the number of people is set between 1 and 10.", Toast.LENGTH_LONG).show();
                 return;
             }
@@ -266,6 +276,8 @@ public class AddRecipeActivity extends AppCompatActivity {
             Recept receptIzBaze = db.getReceptZaId(recept.getId());
             Log.w("MojaKlasa:", receptIzBaze.getImeRecepta());
             Log.w("MojaKlasa:", receptIzBaze.getNotes());
+
+            db.insertReceptUKategoriju(db.getAllKategorije().get(2), recept);
 
             db.close();
         } else {

@@ -1,7 +1,7 @@
 package hr.math.android.kuharica;
 
-/**
- * Created by Branimirko on 27/02/18.
+
+ /* Created by Branimirko on 27/02/18.
  */
 
 public class Sastojak {

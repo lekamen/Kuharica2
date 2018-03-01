@@ -1,6 +1,5 @@
 package hr.math.android.kuharica;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -21,6 +20,7 @@ public class FAMFragment extends Fragment {
     private FloatingActionMenu floatingActionMenu;
     private com.github.clans.fab.FloatingActionButton famKategorija;
     private com.github.clans.fab.FloatingActionButton famRecept;
+    public boolean prikaziObaKruga = true;
 
     private Handler handler = new Handler();
 
@@ -44,7 +44,6 @@ public class FAMFragment extends Fragment {
         famRecept.setLabelText("Novi recept");
 
     }
-
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
