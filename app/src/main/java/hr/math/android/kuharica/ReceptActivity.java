@@ -35,11 +35,21 @@ public class ReceptActivity extends AppCompatActivity {
         final Toolbar toolbar = (Toolbar) findViewById(R.id.MyToolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
+
 
         CollapsingToolbarLayout collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar);
         collapsingToolbar.setCollapsedTitleTextColor(Color.WHITE);
         collapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.colorAccent));
+
+
         //String name = savedInstanceState.getString("recipeName");
         String name = "test_ime";
 
