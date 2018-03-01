@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,11 +18,11 @@ import android.view.MenuItem;
 
 import java.util.List;
 
-public class CategoryActivity extends AppCompatActivity {
+public class CategoryActivity extends AppCompatActivity implements SelectableReceptVH.OnItemSelectedListener{
 
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ReceptAdapter adapterRecept;
+    private SelectableReceptAdapter adapter;
     private DBRAdapter db;
     private Kategorija mcategory;
 
@@ -40,32 +41,33 @@ public class CategoryActivity extends AppCompatActivity {
         db = new DBRAdapter(this);
         db.open();
         mcategory = db.getKategorija(categoryIntent.getExtras().getLong("categoryId"));
+        List<Recept> categoryRecipes = db.getAllReceptiFromKategorija(mcategory.getId());
         db.close();
+
+        adapter = new SelectableReceptAdapter(this,
+                categoryRecipes, true);
+        mRecyclerView.setAdapter(adapter);
+
         setTitle(mcategory.getImeKategorije());
-        populaterecyclerView(mcategory.getId());
-
-    }
-
-    private void populaterecyclerView(long catId){
-
-        db.open();
-        List<Recept> categoryRecipes = db.getAllReceptiFromKategorija(catId);
-        db.close();
-
-        adapterRecept = new ReceptAdapter(categoryRecipes, this, mRecyclerView);
-        mRecyclerView.setAdapter(adapterRecept);
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        adapterRecept.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
     }
 
     @Override
     protected void onPause(){
         super.onPause();
+    }
+
+    @Override
+    public void onItemSelected(SelectableRecept recept){
+        List<Recept> selectedRecepti = adapter.getSelectedRecepti();
+        Snackbar.make(mRecyclerView,"Odabrani recept is "+recept.getImeRecepta()+
+                ", Ukupno  odabranih recepata: "+selectedRecepti.size(),Snackbar.LENGTH_LONG).show();
     }
 
     @Override
