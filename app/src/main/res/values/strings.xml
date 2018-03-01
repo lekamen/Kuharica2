@@ -16,4 +16,5 @@
     !-->napravi
     <string name="splitViewEnabled">splitViewEnabled</string>
     <string name="mPrefs">hr.math.android.kuharica.mPrefrences</string>
+    <string name="abecedni_poredak">Abecedni poredak</string>
 </resources>

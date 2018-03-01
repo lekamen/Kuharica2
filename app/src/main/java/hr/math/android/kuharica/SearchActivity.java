@@ -68,7 +68,7 @@ public class SearchActivity extends AppCompatActivity {
 
     public void pretraziKuharicu(View view) {
         String pretraga = ((EditText)findViewById(R.id.searchText)).getText().toString();
-        if(pretragaKategorije == false)
+        if(!pretragaKategorije)
             pretraziKategorije(pretraga);
         pretraziRecepte(pretraga);
     }

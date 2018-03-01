@@ -1,30 +1,29 @@
 package hr.math.android.kuharica;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.List;
 
-public class CategoryActivity extends AppCompatActivity implements SelectableReceptVH.OnItemSelectedListener{
+public class CategoryActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private SelectableReceptAdapter adapter;
+    private ReceptAdapter adapter;
     private DBRAdapter db;
     private Kategorija mcategory;
+    private List<SelectableRecept> odabraniRecepti;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +43,9 @@ public class CategoryActivity extends AppCompatActivity implements SelectableRec
         List<Recept> categoryRecipes = db.getAllReceptiFromKategorija(mcategory.getId());
         db.close();
 
-        adapter = new SelectableReceptAdapter(this,
-                categoryRecipes, true);
+        adapter = new ReceptAdapter(categoryRecipes, this, mRecyclerView);
         mRecyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
         setTitle(mcategory.getImeKategorije());
 
@@ -64,11 +63,18 @@ public class CategoryActivity extends AppCompatActivity implements SelectableRec
     }
 
     @Override
-    public void onItemSelected(SelectableRecept recept){
-        List<Recept> selectedRecepti = adapter.getSelectedRecepti();
-        Snackbar.make(mRecyclerView,"Odabrani recept is "+recept.getImeRecepta()+
-                ", Ukupno  odabranih recepata: "+selectedRecepti.size(),Snackbar.LENGTH_LONG).show();
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        odabraniRecepti = adapter.getSelectedItems();
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
+        }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
