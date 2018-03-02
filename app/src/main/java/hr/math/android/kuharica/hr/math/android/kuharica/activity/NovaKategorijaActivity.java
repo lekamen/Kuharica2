@@ -86,6 +86,11 @@ public class NovaKategorijaActivity extends AppCompatActivity {
                 }
             }
         });
+
+        if(savedInstanceState != null) {
+            imeKategorije.setText(savedInstanceState.getString("ime"));
+            path = savedInstanceState.getString("path");
+        }
     }
 
     public void odustani(View view) {
